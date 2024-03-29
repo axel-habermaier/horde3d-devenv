@@ -1,0 +1,10 @@
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\bin\Debug\license.txt
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\bin\Debug\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\bin\Debug\WeifenLuo.WinFormsUI.Docking.pdb
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WeifenLuo.WinFormsUI.Docking.DockPanel.bmp
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WeifenLuo.WinFormsUI.Docking.Resources.resources
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WeifenLuo.WinFormsUI.Docking.Strings.resources
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WinFormsUI.csproj.GenerateResource.Cache
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\Axel\Desktop\dock\Src\WinFormsUI\obj\Debug\WeifenLuo.WinFormsUI.Docking.pdb

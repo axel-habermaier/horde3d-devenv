@@ -1,0 +1,113 @@
+\section{Überblick über Horde3D}
+Zu Projektbeginn wurde deutlich, dass die Struktur des \DevEnvs\ maßgeblich vom Aufbau und der Funktionsweise von \Horde\ bestimmt wird. Bevor die genauen System-Anforderungen untersucht wurden, wurde ein konzeptuelles Modell von \Horde\ entwickelt. Dabei wurde die interne Repräsentation der Daten -- also die Klassen und Funktionen, die \Horde\ intern verwendet -- nicht betrachtet. Wichtig ist nur der von außen festzustellende Aufbau, denn nur davon wird die Struktur des Tools beeinflusst. Da die Dokumentation \cite{h3dmanual} allerdings keine Klassendiagramme enthält, musste die Klassenstruktur aus der Beschreibung der API \cite["`Engine API Reference"']{h3dmanual}, der Datenformate \cite["`Data Format Reference"']{h3dmanual} und der Rendering-Pipeline \cite["`Rendering Pipeline Documentation"']{h3dmanual} ermittelt werden.
+
+\subsection{Aufbau des Szenengraphs}
+Ein Szenengraph repräsentiert die logische oder räumliche Zusammensetzung der dargestellten Szene \cite["`Basic Concepts, Scene Graph"']{h3dmanual}. Der Horde3D Szenengraph ist als Baum organisiert, dessen Wurzel als \emph{Root Node} bezeichnet wird. Jeder Knoten, \emph{Scene Node} genannt, kann beliebig viele Kinder haben und besitzt Transformationswerte für Verschiebung, Rotation und Skalierung, die jeweils relativ zum Vaterknoten sind. Knoten werden über ihren \emph{Node Handle} eindeutig identifiziert.
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[scale=1.5]{images/Horde3DSceneGraph.png}
+%\caption{Aufbau und Vererbungshierarchie des \Horde\ Szenengraphs}\label{fig:h3dscenegraph}
+%\end{figure}
+
+Der Szenengraph wird aus folgenden Knotentypen aufgebaut:
+
+\begin{itemize}
+	\item \textbf{Group}: Ein \emph{Group Node} hat keine Repräsentation in der Szene, sondern fasst beliebig viele untergeordnete Knoten zusammen. Damit können beispielsweise alle untergeordneten Knoten auf einmal in der Szene verschoben, rotiert und ein- oder ausgeblendet werden. \emph{Root Node} ist von diesem Typ.
+	\item \textbf{Camera}: In einer Szene können beliebig viele virtuelle Kameras vorhanden sein, die zum Zeichnen der Szene verwendet werden können. Insbesondere ist es möglich, die Kamera einem animierten \emph{Joint Node} unterzuordnen, wobei die Kamera dann dem Bewegungsablauf der Animation folgt.
+	\item \textbf{Light}: Ein \emph{Light Node} repräsentiert eine Lichtquelle in der Szene. Derzeit werden von \Horde\ nur \emph{Spotlights} unterstützt. Ein Lichtknoten kann durch verschiedene Parameter -- wie Lichtfarbe, Reichweite und das An- oder Abschalten des Schattenwurfs -- an die Szene angepasst werden.
+	\item \textbf{Model}: Ein \emph{Model Node} repräsentiert ein 3D-Modell, welches aus einer Modellierungssoftware exportiert wurde. Es ist eine Menge von \emph{Mesh Node}s und \emph{Joint Node}s, welche das Aussehen und die Animation des Modells definieren.
+	\item \textbf{Mesh}: Ein \emph{Mesh Node} enthält verschiedene Polygone, die zum Zeichnen eines 3D-Modells verwendet werden. Alle Polygone werden dabei mit dem gleichen Material gezeichnet.
+	\item \textbf{Joint}: Eine Hierarchie von \emph{Joint Node}s repräsentiert ein animierbares Skelett.
+	\item \textbf{Emitter}: Ein \emph{Emitter Node} ist der Ursprungsort von Partikeln und kann verschiedene Eigenschaften der erzeugten Partikel beeinflussen.
+	\item \textbf{Overlay}: Ein \emph{Overlay} ist eigentlich kein Teil des Szenengraphs. Es repräsentiert eine zweidimensionale Grafik, die über die dargestellte Szene gezeichnet wird. Damit kann zum Beispiel ein \emph{Heads Up Display} realisiert werden. Auch das Zeichnen von Text wird von \Horde\ durch Verwendung von \emph{Overlay}s umgesetzt.
+\end{itemize}
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[scale=0.4]{images/KnightSampleSceneGraph.png}
+%\caption{Ausschnitt des Szenengraphen des \textit{Horde3D} Knight Samples}\label{fig:knightscenegraph}
+%\end{figure}
+
+\subsection{Ressourcen-Verwaltung}
+Ressourcen sind Daten, die zum Zeichnen der Szene benötigt werden. Dabei können mehrere \emph{Scene Node}s die gleichen Ressourcen verwenden \cite["`Basic Concepts, Resource Management"']{h3dmanual}. Der Horde3D Ressourcen Manager lädt Ressourcen bei Bedarf und vergibt eindeutige \emph{Res Handles} zur Identifikation. Ressourcen können jederzeit neu geladen werden.
+
+Horde3D kennt folgende Arten von Ressourcen:
+
+\begin{itemize}
+	\item \textbf{Scene Graph}: Eine \emph{Scene Graph Resource} enthält einen Szenengraph, der zum aktuellen Szenengraph als Ast hinzugefügt werden kann.
+	\item \textbf{Geometry}: Eine \emph{Geometry Resource} enthält Polygon-Daten für \emph{Mesh Nodes}. Neben den eigentlichen Eckpunkt-Koordinaten können auch weitere Daten -- wie Normalen, Tangenten, Texturkoordinaten, etc. -- enthalten sein.
+	\item \textbf{Animation}: Eine \emph{Animation Resource} stellt Animationsdaten für \emph{Mesh} und \emph{Joint Nodes} bereit.
+	\item \textbf{Pipeline}: Eine \textit{Pipeline Resource} ist ein XML-Dokument, das die erforderlichen Schritte zum Zeichnen der Szene beschreibt. Dafür können zunächst \emph{Render Targets} angelegt und die Engine-Konfiguration angepasst werden. Danach werden die einzelnen Schritte genau beschrieben: Zeichenreihenfolge der Material-Klassen, Lichtberechnungen, Verwenden von \emph{Render Targets} als Quelle und Ziel für Zeichenoperation, usw. Die Pipeline ist sehr flexibel und unterstützt sowohl \emph{Forward} als auch \emph{Deferred Shading}.
+	\item \textbf{Material}: Eine \emph{Material Resource} definiert das Aussehen einer Oberfläche. Sie legt fest, welche Texturen und welcher Shader zum Zeichnen verwendet werden.
+	\item \textbf{Shader}: Eine \emph{Shader Resource} legt einen Kontext für die Ausführung der Vertex und Fragment Shader auf der Grafikkarte fest. So kann ein Shader zum Beispiel einen Kontext für den \emph{Ambient Pass} und einen für den \emph{Deferred Lighting Pass} enthalten. Die Kontexte unterscheiden sich beim Code für Vertex und Fragment Shader und bei den Rendering-Optionen wie \emph{Depth Writes}, \emph{Alpha Writes}, etc.
+	\item \textbf{Code}: Eine \emph{Code Resource} enthält Shader Code, der von mehreren Shadern verwendet werden kann.
+	\item \textbf{Texture}: Eine \emph{Texture Resource} ist eine 2D-Textur oder \emph{Cube Map}, die beim Zeichnen von Oberflächen verwendet wird.
+	\item \textbf{Particle Effect}: Eine \emph{Particle Effect Resource} legt die Größe, Farbe, Geschwindigkeit und Lebensdauer von Partikeln fest.
+\end{itemize}
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[scale=1.2]{images/Horde3DResources.png}
+%\caption{Aufbau und Vererbungshierarchie der \Horde\ Ressourcen}\label{fig:h3dresources}
+%\end{figure}
+
+%Abbildung~\ref{fig:h3dresources} beschreibt den Aufbau und Vererbungshierarchie der Ressourcen. Die \textit{EditableResource}-Klasse ist in \textit{Horde3D} nicht vorhanden sondern soll zeigen, welche Arten von Ressourcen vom \DevEnv\ geändert werden können. Einige Details der Shader und Pipelines sowie der Zusammenhang zwischen Ressourcen und \textit{Scene Nodes} werden in diesem Diagramm aus Gründen der Übersichtlichkeit allerdings nicht gezeigt.
+
+\subsection{Eigenschaften der Horde3D-API}
+Anwendungen können \Horde\ durch Einfügen einer \emph{Header}-Datei und Linken gegen eine \emph{Dynamic Link Library} (DLL) einbinden. Obwohl die Engine in objekt-orientiertem \C++ entwickelt wurde, orientiert sich die öffentliche Schnittstelle am Design der C-basierten Win32-API. Die Beta 3 von Version 1.0.0 hat gerade einmal 78 öffentliche Funktionen. Dies erleichtert das Erlernen der API und das Erstellen von \emph{Bindings} für verschiedenen Programmiersprachen. Momentan werden C, \C++ und alle .NET-Sprachen offiziell unterstützt, weitere \textit{Bindings} werden derzeit von der Community entwickelt\footnote{Momentan entwickelt die Community zum Beispiel \textit{Bindings} für die Sprachen Python, D und Lua (\url{http://www.horde3d.org/wiki/index.php5?title=Language_Bindings}). Sogar für die funktionale Sprache Haskell gibt es \emph{Bindings} (\url{http://www.horde3d.org/forums/viewtopic.php?f=1&t=550}).}. Gegenüber einer objekt-orientierten Schnittstelle, wie sie z.B. OGRE bietet, wird für manche Aufgaben jedoch mehr Code benötigt. Beispielsweise sind drei Funktionsaufrufe nötig, um die Farbe eines \emph{Light Nodes} zu setzen; die Position, Rotation und Skalierung eines \emph{Nodes} können nicht einzeln geändert werden und es gibt keine Vektor-Datentypen:
+
+\lstset{language=C++} 
+\begin{lstlisting}
+// Horde3D::setNodeParamf muss dreimal aufgerufen werden, 
+// um die Lichtfarbe auf Rot zu setzen.
+Horde3D::setNodeParamf(light, LightNodeParams::Col_R, 1.0f);
+Horde3D::setNodeParamf(light, LightNodeParams::Col_G, 0.0f);
+Horde3D::setNodeParamf(light, LightNodeParams::Col_B, 0.0f);
+
+// Diese Funktion ändert die Position, Rotation und Skalierung von 
+// 'node'. Dafür müssen immer alle Werte skalar übergeben werden.
+Horde3D::setNodeTransform(node, 0, 20, 50, -30, 0, 0, 1, 1, 1);
+\end{lstlisting}
+
+%Wie sich später jedoch zeigen wird, erleichtert dieser API-Stil die Entwicklung des \DevEnvs.
+
+Die Kern-API wurde schlank gehalten und ist ausreichend, um alle Features der Engine zu verwenden. Es gibt jedoch zusätzlich die Horde3D \emph{Utility Library}, die verschiedene spezifische Funktionen zur Produktivitätssteigerung bereitstellt. Mit dieser Bibliothek können zum Beispiel Ressourcen von der Festplatte geladen, Frame Statistiken angezeigt, der OpenGL-Kontext initialisiert oder Objekte der dargestellten Szene selektiert werden. Der Stil der Horde3DUtils-API entspricht dem der Kern-API \cite["`Utility Library API Reference"']{h3dmanual}.
+
+\Horde\ bietet außerdem einen Mechanismus an, um die Features der Engine durch Plugins zu erweitern. Diese verwenden nicht die öffentliche API, sondern haben Zugriff auf die interne Klassenstruktur von \Horde. Um das zu ermöglichen, werden die Plugins zur Kompilierungszeit statisch in die \Horde\ DLL hineinkompiliert. Die öffentlichen Schnittstellen der Plugins erweitern dann die Kern-API und können von allen \Horde-Anwendungen verwendet werden, die gegen die erweiterte DLL gelinkt werden \cite["`Basic Concepts"']{h3dmanual}.
+
+\subsection{Fehlerbehandlung und Debug-Informationen}
+Da C keine Ausnahmen unterstützt, zeigen \Horde-Funktionen Fehler durch spezielle Fehlerwerte auf; so gibt beispielsweise die Funktion \texttt{int getNodeType(NodeHandle)} im Fehlerfall den Wert \texttt{ResourceTypes::Undefined} zurück. Zusätzlich verwaltet \Horde\ intern eine Liste aller aufgetretenen Fehler. Auch Ereignisse und Debug-Informationen werden protokolliert, wie zum Beispiel das Hinzufügen eines neuen \emph{Scene Nodes}, das Laden einer Ressource oder Probleme beim Kompilieren des Shader Codes. Die protokollierten Meldungen können aus der Engine ausgelesen werden, beziehungsweise über eine Funktion der \emph{Utility Library} direkt in eine Datei im HTML-Format auf die Festplatte geschrieben werden. Dies sind hilfreiche Informationen beim Entwickeln und Debuggen einer \Horde-Anwendung.
+
+\subsection{Shader und Rendering-Pipeline}
+\Horde\ baut auf OpenGL 2.0 auf, das eine hardware-unabhängige Schnittstelle für hardware-beschleunigte Rasterisierung von 3D-Grafik auf der Grafikkarte (GPU) bietet. Abbildung~\ref{fig:graphicsPipeline} gibt einen Überblick über die Pipeline-Architektur moderner GPUs. \texttt{Vertex Data} sind die untransformierten Daten der Eckpunkte der Geometrie der aktuellen Szene. \texttt{Primitive Data} verbindet diese Vertex-Daten zu einer Menge von Punkten, Linien, Dreiecken oder Polygonen. Die \texttt{Vertex Processing}-Stufe verwendet die Szenen- und Projektionsmatrizen zum Transformieren der Eckpunkte und berechnet gegebenenfalls weitere Daten pro Vertex, wie etwa Texturkoordinaten. In der \texttt{Geometry Processing}-Stufe findet die eigentliche Rasterisierung statt. Beim \texttt{Fragment Processing} werden die Farbwerte der Fragmente\footnote{Ein Pixel ist ein Bildpunkt auf dem Bildschirm. Ein Fragment hingegen ist ein Pixel, der eventuell nicht sichtbar ist. Im Allgemeinen werden pro Bild mehr Fragmente berechnet, als Pixel überhaupt sichtbar sein können, weil manche Fragmente später unter gewissen Umständen wieder überschrieben werden.} berechnet und in der \texttt{Fragment Rendering}-Stufe schließlich die Tiefen-, Alpha- und \emph{Stencil}-Tests durchgeführt. Sind die Tests für ein Fragment erfolgreich, so wird es in die Ausgabe-Textur geschrieben oder hineingemischt \cite{dxsdk}.
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 5mm 265mm 30mm 5mm, clip, scale=0.7]{images/GraphicsPipeline.pdf}
+\caption{Die Grafik-Pipeline von Direct3D 9 und OpenGL 2.0}\label{fig:graphicsPipeline}
+\end{figure}
+
+Bei modernen Grafikkarten können Fragmente nicht nur in den \emph{Backbuffer} geschrieben werden, sondern auch in \emph{Render Targets} (RTs). \emph{Render Targets} können im weiteren Verlauf wiederum als Eingabe für weitere Zeichenoperationen dienen. Dieses Vorgehen ist für eine Vielzahl moderner Effekte relevant; beispielsweise gibt es Effekte, die die zuvor berechneten Tiefeninformationen der Szene kennen müssen. Es ist auch möglich, dass eine Zeichenoperation gleichzeitig verschiedene Werte in verschiedene RTs schreibt, also \emph{Multiple Render Target}s (MRTs) verwendet.
+
+Seit DirectX 8 und den \texttt{ARB\_vertex\_program}- und \texttt{ARB\_fragment\_program}-Erweiterungen für OpenGL ist es möglich, die \texttt{Vertex} und \texttt{Fragment Processing}-Stufen der Grafik-Pipeline mit Vertex respektive Fragment Shadern\footnote{Was unter OpenGL Fragment Shader heißt, wird von Direct3D als Pixel Shader bezeichnet. Da die Fragment/Pixel Shader aber auf Fragmenten und nicht auf Pixeln arbeiten, ist die OpenGL-Terminologie zutreffender.} frei zu programmieren. Allerdings waren diese frühen APIs stark eingeschränkt; die Syntax der Shadersprache war an Assembler angelehnt und die Anzahl der Instruktionen pro Shader war sehr stark begrenzt. Durch die Weiterentwicklung der Grafik-Hardware konnten die Limitierungen jedoch zunehmend aufgehoben und mit HLSL, Cg und GLSL C-ähnliche Sprachen für die Shader-Programmierung entwickelt werden.
+
+Die freie Programmierbarkeit der Vertex und Fragment Shader ermöglicht die Implementierung komplexer, hardware-beschleunigter Effekte. Ohne Shader wären die Effekte gar nicht oder nur mit sehr viel Programmieraufwand realisierbar. Der Erfolg der Shader zeigt sich auch dadurch, dass mit DirectX 10 sogar noch eine weitere Shader-Art, Geometry Shader, hinzugekommen ist. Zusätzlich wurde die \emph{Fixed Function Pipeline}, also die Pipeline ohne frei programmierbare Shader, komplett entfernt. DirectX 11 wird noch drei weitere Shader-Arten hinzufügen und HLSL um die Unterstützung von objekt-orientierten Konzepten erweitern.
+
+\Horde\ verwendet GLSL als Shadersprache und unterstützt derzeit offiziell nur Vertex und Fragment Shader. Wichtig für die Verwendung von Shadern ist das Verständnis der Funktionsweise und der Kommunikationsmöglichkeiten zwischen den beiden Shader-Arten. 
+
+Der Shader Code wird für jedes Vertex und jedes Fragment einzeln ausgeführt, insbesondere kennt ein Shader keine anderen Eckpunkte oder Fragmente. Nur durch diese Einschränkung kann der hohe Grad der Parallelisierbarkeit der Shader gewährleistet werden -- moderne Grafikkarten berechnen hunderte Shader gleichzeitig. 
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 5mm 170mm 45mm 75mm, clip, scale=0.7]{images/GraphicsPipeline.pdf}
+\caption{Datenfluss zwischen Vertex und Fragment Shadern in OpenGL 2.0}\label{fig:shaderData}
+\end{figure}
+
+Abbildung~\ref{fig:shaderData} zeigt den Datenfluss zwischen den Shadern. Der Vertex Shader erhält Attribute für jedes Vertex, beispielsweise die Position und die Textur-Koordinaten. Über \emph{Uniform}s können Vertex-unabhängige Daten, wie etwa die Transformations- und Projektionsmatrizen, Position der Lichtquelle, etc., abgerufen werden. Manche \emph{Uniform}s werden von OpenGL auch als \emph{built-in} Variablen zur Verfügung gestellt\footnote{\emph{Built-in} Variablen wie beispielsweise Nebel- oder Lichtquellen-Einstellungen sind aus Effizienzgründen seit OpenGL 3.1 kein Teil des Standards mehr \cite{openglspec}.}. Auch Texturen können als Eingabe verwendet werden. Die Ausgabe erfolgt an spezielle Ausgabevariablen oder an Variablen, die über alle Eckpunkte eines Primitivs interpoliert und an den Fragment Shader weitergereicht werden. Der Fragment Shader kann mit diesen interpolierten Werten weiterrechnen und hat ebenfalls Zugriff auf die \emph{Uniforms}. Die Ausgabe des Fragment Shaders ist ein Farbwert und implizit auch ein Tiefenwert. Bei der Verwendung von MRTs werden mehrere Farbwerte ausgegeben \cite[S. 52]{astle}.
+
+\Horde\ verwendet zwar GLSL, führt aber ein XML-ähnliches Format ein, um die Ausdrucksstärke der Shader zu erweitern. Die Erweiterung ist an die \emph{HLSL Effects} von Direct3D angelehnt. Dieses Framework ermöglicht es, für einen Effekt verschiedene Stufen zu definieren -- von \Horde\ als Kontext bezeichnet --, die jeweils unterschiedlichen Shader Code ausführen. Es können auch \emph{Uniforms} global definiert und Einstellungen für verwendete Texturen, wie zum Beispiel der anzuwendende Texturfilter, festgelegt werden. Jeder Kontext kann außerdem die Vergleichsfunktion für den Tiefen- und Alphatest auswählen und eine Funktion für das \emph{Blending} spezifizieren.
+
+Das Pipeline-Konzept von \Horde\ geht jedoch über die \emph{HLSL Effects} hinaus. Pipelines ermöglichen die Definition verschiedener \emph{Render Targets} und die Festlegung deren Verwendung in den einzelnen Zeichenschritten als Ein- oder Ausgabe für die Shader. Es kann genau spezifiziert werden, welche Material-Klassen mit welchen Shader-Kontexten gezeichnet werden, wann \emph{Overlays} über die Szene gelegt werden und welche Art der Lichtberechnung -- \emph{Forward} oder \emph{Deferred Shading} -- verwendet wird. 

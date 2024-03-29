@@ -1,0 +1,93 @@
+\section{Anforderungen an das System}
+\begin{figure}[ht]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 1mm 160mm 60mm 1mm, clip, scale=0.7]{images/UseCase_Model.pdf}
+\caption{Das \emph{Use Case} Modell des \DevEnvs}\label{fig:ucModel}
+\end{figure}
+Nach der Betrachtung der Funktionsweise von \Horde\ mussten die Anforderungen an das \DevEnv\ konkretisiert werden. Es kamen viele Möglichkeiten in Betracht, die Entwickler eines Spiels beim Erstellen, Optimieren und Feinabstimmen der Spieleeffekte zu unterstützen. Im Rahmen dieser Bachelorarbeit wurden deshalb ausschließlich diejenigen Anforderungen betrachtet, die speziell bei der Entwicklung von \SheepMeUp\ von Nutzen gewesen wären. Weitere denkbare Anforderungen und Erweiterungen des Systems werden in Kapitel~\ref{Ausblick} vorgestellt.
+
+Abbildung~\ref{fig:ucModel} zeigt das \emph{Use Case} Modell des Systems. Die Anwendungsfälle werden in den folgenden Abschnitten genauer beschrieben. Aktivitätsdiagramme für die \emph{Use Cases} sind im Anhang abgebildet.
+
+\subsection{Unabhängigkeit und Eigenständigkeit}
+Eine übergeordnete Anforderung an das System war die Unabhängigkeit von der konkreten \Horde-Anwendung und von der Implementierung von \Horde. Um das \DevEnv\ beim Entwickeln einer Anwendung verwenden zu können, sollen keine Änderungen an der Anwendung nötig sein; es sollen keine speziellen Funktionen aufgerufen oder gegen zusätzliche Programmbibliotheken gelinkt werden müssen. 
+
+Das System soll aber auch unabhängig von der Implementierung von \Horde\ sein. Dies verhindert das Überladen der Kern-API der Engine mit Tool-spezifischen Funktionen und erleichtert die Weiterentwicklung in getrennten Entwicklergruppen. 
+
+Einzige Voraussetzung an \Horde-Anwendungen ist, dass eine unmodifizierte Horde3D DLL verwendet wird\footnote{Die derzeitige Implementierung unterstützt ohne erneutes Kompilieren keine modifzierten \Horde\ DLLs oder \Horde-Extensions.}.
+
+\subsection{Absicherung vor unerwünschtem Reverse-Engineering}
+Mit dem \DevEnv\ können Einblicke in den Aufbau und in die Funktionsweise der Effekte von \Horde-Anwendung gewonnen werden. Dies könnte mög\-lich\-er\-weise von manchen Anwendungsentwicklern unerwünscht sein. Das System soll seine Dienste verweigern, wenn die Anwendung die Verwendung des \DevEnvs\ nicht explizit erlaubt. Um die Verwendung nur explizit zuzulassen, ist jedoch eine Modifizierung der Anwendung notwendig. Die damit einhergehende Verletzung des Ziels der Unabhängigkeit wird aber bewusst in Kauf genommen. So soll es für die Entwickler von \Horde-Anwendungen möglich sein, das \DevEnv\ nur mit \emph{Debug Builds} ihrer Anwendung zu verwenden, wohingegen das Tool bei \emph{Release Builds} nicht verwendet werden kann.
+
+Diese Anforderung wurde erst in einer späteren Iteration aufgenommen. Ursprünglich regte Nicolas Schulz, der Entwickler von \Horde, die Entwicklung des Schutzmechanismus an.
+
+\subsection{Konfigurieren und Ausführen der Horde3D-Anwendung}
+Das System soll als eigenständig ausführbares Programm entwickelt werden, aus dem heraus die \Horde-Anwendung gestartet werden kann. Dadurch wird es erleichtert, die Anforderung der Unabhängigkeit zu erfüllen. Eine Alternative wäre, während der Ausführung der Anwendung beim Drücken einer bestimmten Taste das \DevEnv\ zu laden und anzuzeigen. Dies hätte jedoch Änderungen an der Anwendung oder an \Horde\ notwendig gemacht. Ein weiterer Vorteil der gewählten Lösung ist die Möglichkeit, das Tool später auch "`offline"' -- also ohne laufende \Horde-Anwendung -- verwenden zu können (siehe auch Kapitel~\ref{Ausblick}).
+
+Für den Start der \Horde-Anwendung sollen verschiedene Parameter eingestellt und gespeichert werden können: der Pfad zur \emph{Executable} der Anwendung, das Arbeitsverzeichnis, Kommandozeilenparameter sowie verschiedene implementierungsspezifische Details. Das \DevEnv\ soll eine Eingabemaske für diese Parameter bereitstellen und die Pfade auf Korrektheit überprüfen. Abbildung~\ref{fig:ucEinstellungenAendern} zeigt das Aktivitätsdiagramm für die Konfiguration der Anwendungsparameter.
+
+Abbildung~\ref{fig:ucAnwendungAusfuehren} erläutert die Verwendung des \DevEnvs. Das System soll auf Wunsch des Benutzers die Anwendung starten. Der Benutzer soll grundsätzlich jederzeit die Möglichkeit haben, die Anwendung wieder zu beenden. Während das Programm läuft, soll das System sofort alle von \Horde\ generierten Fehler-, Debug- und Informationsmeldungen in einer Übersicht anzeigen. Damit kann der Benutzer Probleme seiner Anwendung identifizieren, ohne die von den Horde3DUtils generierte HTML-Datei durchzusehen.
+
+Hat die Anwendung einen Zustand erreicht, in dem der Benutzer die Anwendung anhalten möchte, teilt er dies dem System mit. Das System soll die Anwendung anhalten und es dem Benutzer ermöglichen, die aktuelle Szene zu betrachten und Ressourcen zu ändern, während sich die Szene selbst nicht ändert. Dies kann im Allgemeinen, also ohne ein spezielles Anhalten der Anwendung, nicht garantiert werden: Ein Explosionseffekt in einem Spiel wird beispielsweise nur wenige Sekunden andauern. Möchte man den Effekt ändern, so kann das Anhalten der Explosionsanimation beim Finetuning der Details der Explosion hilfreich sein.
+
+Während die Szene eingefroren ist, soll der Benutzer den Zustand der Anwendung analysieren können:
+
+\begin{itemize}
+	\item Das System soll alle bekannten Ressourcen auflisten. Falls eine Ressource editierbar ist, soll auf Wunsch die XML-Datei der Ressource geladen werden können. Der Benutzer soll die XML-Datei frei ändern und die Änderungen speichern können. Anschließend soll das System die Szene mit der geänderten Ressource automatisch neu zeichnen.
+
+	\item Während der Ausführung der Anwendung werden von \Horde\ Fehler- und Debug-Meldungen erzeugt. Das System soll diese bereits während der Ausführung anzeigen und eine Filterung nach Wichtigkeit unterstützen.
+	
+	\item %Viele Shader-Effekte benötigen eine Kopie der aktuellen Szene. Dafür werden Render Targets verwendet: Die Szene wird zunächst in ein Render Target gezeichnet, aus welchem anschließend ein Shader die Szenendaten auslesen kann. Die Rendering Pipeline von \Horde\ unterstützt dieses Prinzip. 
+	Mit dem Tool soll es möglich sein, den Inhalt von aktiven \emph{Render Targets} zu betrachten. Da sich deren Daten, während die Anwendung nicht eingefroren ist, in jedem Frame ändern können, soll das System automatisch in kurzen Zeitintervallen den dargestellten Inhalt aktualisieren.
+	
+		\item Das \DevEnv\ soll dem Benutzer eine einfache Profiling-Funktion anbieten. Das System soll die Aufrufe aller \Horde-Funktionen aufzeichnen und dem Benutzer anzeigen. Es soll dann eine Auswertung der gewonnenen Daten möglich sein.
+
+	\item Der Benutzer soll einen Überblick über den aktuellen Zustand des Szenengraphs erhalten können. Dazu soll der komplette Szenengraph als Baum dargestellt werden. Zu jedem \emph{Scene Node} sollen auf Wunsch weitere Details, wie etwa Typ, Name, Transformationswerte, etc., angezeigt werden. 
+	
+\end{itemize}
+
+Anschließend kann der Benutzer entweder die Anwendung beenden oder mit der Ausführung fortfahren. Anders als in Abbildung~\ref{fig:ucAnwendungAusfuehren} dargestellt, soll das System aber auch während der Weiterausführung das Ändern von Ressourcen und Anzeigen des Inhalts von \emph{Render Targets} erlauben.
+
+\subsection{Bearbeiten von Ressourcen und sofortiges Anzeigen der Änderungen}
+Das System soll das Neuladen von geänderten Ressourcen ohne explizite Unterstützung der Anwendung ermöglichen. Das ist der wichtigste \emph{Use Case} des \DevEnvs: Jeder beliebige Shader- oder Partikel-basierte Spezialeffekt, jedes Material und jede Pipeline soll mit dem Tool zur Laufzeit der Anwendung, aber völlig unabhängig von dieser, geändert werden können. Die Anwendung soll beim nächsten Zeichnen der Szene sofort die aktualisierten Ressourcen verwenden. Abbildungen \ref{fig:ucRessourcenBetrachten} und \ref{fig:ucRessourceVerwalten} zeigen den Ablauf dieses Anwendungsfalls. Zunächst sollen alle Ressourcen in einer Übersicht angezeigt werden. Das System soll eine Filtermöglichkeit nach Ressourcen-Typ und -Name anbieten. Falls der Benutzer eine editierbare Ressource auswählt, soll das System die zugrundeliegende XML-Datei der Ressource in einem Texteditor anzeigen. Änderungen an der XML-Datei sollen gespeichert und sofort an die \Horde-Anwendung übermittelt werden können.
+
+Beim Entwickeln der Kraftfeld- und Schockwellen-Effekte für \SheepMeUp\ war es wichtig, verschiedene Parameter der Effekte fein zu justieren und an das \emph{Look and Feel} des Spiels anzupassen. Das Ausblenden des Effekts, die Farbgebung, die Intensität und die Abspieldauer mussten von Hand eingestellt werden. Da weder \Horde\ noch \SheepMeUp\ ein automatisches Neuladen der Ressourcen unterstützen, war nur folgendes Vorgehen möglich:
+
+\begin{enumerate}
+	\item Die XML-Datei des Effekts ändern.
+	\item Eventuell muss die Anwendung neu kompiliert und gelinkt werden\footnote{Bei der Entwicklung von \SheepMeUp\ war eine Neukompilierung erforderlich, wenn der Effekt von Werten aus der Anwendung abhing, die ebenfalls angepasst werden mussten. Dieses Problem kann das \DevEnv\ nicht lösen. Wäre \SheepMeUp\ nicht in \C++, sondern in \Csharp\ entwickelt worden, hätte dieses Problem durch die \emph{Edit And Run}-Funktionalität von Visual Studio vermieden werden können.}.
+	\item Das Spiel starten.
+	\item Bis zur entsprechenden Stelle im Spiel spielen.
+	\item Das Aussehen des Effekts beurteilen.
+	\item Bei Nichtgefallen zurück zu Schritt 1.
+\end{enumerate}
+
+Dieser Prozess war zeitintensiv und unproduktiv. Das \DevEnv\ soll ein kontinuierliches Testen und Anpassen der Effekte ermöglichen und somit die Optimierung der Effekte leichter und schneller gestalten. Dies führt zu einer entsprechenden Verbesserung der Ästhetik des Spiels, und somit auch des Spiels insgesamt \cite[nach S. 89]{schell}. Das verbesserte Vorgehen lässt sich wie folgt zusammenfassen:
+
+\begin{enumerate}
+	\item Das Spiel starten. 
+	\item Bis zur entsprechenden Stelle im Spiel spielen.
+	\item Das Aussehen des Effekts beurteilen.
+	\item Die XML-Datei des Effekts ändern, gegebenenfalls sogar unterstützt durch einen Designer.
+	\item Bei Nichtgefallen zurück zu Schritt 3.
+\end{enumerate}
+
+Während der Entwicklung des Systems zeigte sich außerdem, dass das Shader-Format von \Horde\ bei komplexen Shadern unübersichtlich werden kann. Aus diesem Grund wurde die Entwicklung eines visuellen Designers für \Horde-Shader in die Anforderungen aufgenommen. Im Rahmen dieser Bachelorarbeit soll die nötige Infrastruktur für den Shader-Designer implementiert sowie die automatische Synchronisation des Designers und der XML-Datei umgesetzt werden. Der Designer soll das Ändern von bereits vorhandenen Shadern unterstützen; neue Shader sollen damit nicht angelegt werden können. In Kapitel~\ref{Ausblick} wird kurz auf die Limitierungen der derzeitigen Implementierung des Designers eingegangen.
+
+\subsection{Anzeigen von Fehlern und Debug-Informationen}
+\Horde\ generiert laufend Fehler- und Debug-Meldungen. Diese Meldungen sind die einzige Möglichkeit, mehr über aufgetretene Probleme beziehungsweise den derzeitigen internen Zustand der Engine zu erfahren. So traten bei der Entwicklung von \SheepMeUp\ mehrere Probleme auf, die nur mit Hilfe von \Horde-Fehlermeldungen gelöst werden konnten. Beispielsweise kam es in unregelmäßigen Zeitabständen vor, dass scheinbar zufällig ausgewählte Schafe aus der Szene entfernt wurden. Im Anwendungscode gab es keine Hinweise, die dieses Problem erklären konnten, da Schafe nur an einer genau definierten Stelle gelöscht wurden. Der entsprechende Code wurde beim Auftreten des Bugs aber nicht ausgeführt. Erst ein Blick in die von den Horde3DUtils generierte HTML-Datei führte zur Lösung des Problems. Die Datei enthielt mehrere Warnungen über Versuche, \emph{Scene Nodes} über ungültige \emph{Node Handles} aus dem Szenengraph zu löschen. Es stellte sich heraus, dass die Schafe sowohl vom Anwendungscode gelöscht wurden als auch von der verwendeten Game Engine der Universität Augsburg. Da \Horde\ nach dem Löschen eines Knoten dessen \emph{Node Handle} neu vergibt, wurde manchmal beim zweiten Löschen ein neu erzeugter Knoten im Szenengraph gelöscht. Mit diesem Wissen war das Problem leicht zu beheben und die HTML-Datei war anschließend frei von Fehlermeldungen.
+
+Die Wichtigkeit der \Horde-Meldungen beim Entwickeln von Anwendungen ist nicht zu unterschätzen. Problematisch ist, dass die Meldungen standardmäßig gar nicht angezeigt werden und von den Horde3DUtils nur in eine HTML-Datei geschrieben werden. Dort aber übersieht man wichtige Informationen leicht. Im Zusammenhang mit dem Neuladen von aktualisierten Ressourcen sind die Meldungen aber auch noch aus einem weiteren Grund sehr wichtig. Sie zeigen nämlich Probleme beim Neuladen der Ressourcen an, beispielsweise Syntaxfehler im GLSL-Code oder falsche Pfade zu referenzierten Ressourcen. 
+
+Das System soll zum einen alle generierten Meldungen anzeigen und zum anderen auch das Filtern der Meldungen nach Wichtigkeit -- also Fehler, Warnung, Debug-Information -- unterstützen. Abbildung~\ref{fig:ucMeldungenBetrachten} zeigt das Aktivitätsdiagramm für diesen \emph{Use Case}.
+
+\subsection{Anzeigen von Render Targets}
+Für die Kraftfeld- und Schockwellen-Effekte verwendet \SheepMeUp\ mehrere \emph{Render Targets}, die die aktuellen Szenen-Daten, den Abstand eines Pixels zur Kamera und Ergebnisse verschiedener Zwischenberechnungen enthalten. Beim Programmieren der Shader wäre es hilfreich gewesen, direkt den Inhalt der RTs betrachten zu können. Als Workaround musste ein spezieller Schritt in die Pipeline-Konfiguration von \SheepMeUp\ eingeführt werden, der den Inhalt eines \emph{Render Targets} in den \emph{Backbuffer} kopiert und anzeigt. Das Spiel musste dann neu ge\-star\-tet und bis zur entsprechenden Stelle gespielt werden, um den Inhalt des RTs betrachten zu können. 
+
+\emph{Render Targets} werden generell für die Grafikentwicklung immer wichtiger. \emph{Post Processing} Shader benötigen die gezeichnete Szene als Eingabe und das immer mehr in Mode kommende \emph{Deferred Shading} benötigt MRTs, um die Position jedes Pixels in der 3D-Welt, die Normale des Pixels und Materialeigenschaften zu speichern \cite[S. 255ff]{astle}. Daher soll das \DevEnv\ das Betrachten des RT-Inhalts vereinfachen. Wie Abbildung~\ref{fig:ucRenderTargetBetrachten} zeigt, soll das System dem Benutzer alle bekannten \emph{Render Targets} der eingefrorenen Szene zur Auswahl anbieten. Nachdem der Benutzer eines ausgewählt hat, soll das Tool den Inhalt des RTs darstellen. Da sich dieser im Allgemeinen in jedem Frame ändert, soll das System immer die aktuellen Daten anzeigen. Dies soll auch während der Ausführung der Anwendung möglich sein. Bei der Implementierung dieses Features zeigte sich jedoch, dass ein Auslesen der RT-Daten in Echtzeit zu unperformant ist. Stattdessen soll ein Intervall eingestellt werden können, innerhalb dessen die angezeigten Daten aktualisiert werden.
+
+\subsection{Profiling von Horde3D-Funktionen}
+Grafikberechnungen sind sehr leistungshungrig, daher kann eine Optimierung des Codes lohnend sein -- eventuell gestützt durch Profiling-Tools wie Intels VTune\footnote{\url{http://software.intel.com/en-us/intel-vtune}}. Es ist keine Anforderung an das \DevEnv, etablierte Profiling-Tools zu ersetzen. Es soll aber möglich sein, einen generellen Überblick über die Aufrufkosten von \Horde-Funktionen zu erhalten und entsprechende Auswertungen vorzunehmen. Das System soll eine Szene profilen können, indem es für einen Frame die Aufrufdaten der \Horde-Funktionen -- den Zeitpunkt des Aufrufs, die Ausführungsdauer, sowie die Aufrufsreihenfolge und damit die Aufrufshäufigkeit -- protokolliert und dem Benutzer anzeigt. Der Benutzer soll die gewonnen Daten nach folgenden Kriterien analysieren können: Durchschnittliche Ausführungsdauer einer Funktion, absolute Ausführungsdauer einer Funktion und Anzahl der Aufrufe einer Funktion. Es soll außerdem eine Aufruf-Historie dargestellt werden, die den zeitlichen Ablauf der Funktionsaufrufe repräsentiert. Abbildung~\ref{fig:ucAnwendungProfilen} zeigt diesen Anwendungsfall als Aktivitätsdiagramm.
+
+\subsection{Anzeigen des Szenengraphs}
+Im Rahmen der Bachelorarbeit soll eine Visualisierung des Zustands des Szenengraphs einer eingefrorenen Szene implementiert werden. Die Visualisierung soll dabei die Baumstruktur des Szenengraphs widerspiegeln. Wie Abbildung~\ref{fig:ucSzenengraphBetrachten} illustriert, sollen zu jedem \emph{Scene Node} auf Wunsch des Benutzers weitere Details angezeigt werden, wie beispielsweise der Typ des Knotens, sein Name oder seine Transformationswerte. Für das Auslesen und Anzeigen der Daten soll die benötigte Infrastruktur entworfen und implementiert werden. In Kapitel~\ref{Ausblick} werden Ideen und Möglichkeiten für zukünftige Versionen des Tools vorgestellt, um diese Daten für interessante und hilfreiche Features zu verwenden.

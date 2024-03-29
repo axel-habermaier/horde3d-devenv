@@ -1,0 +1,9 @@
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\bin\license.txt
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\bin\WeifenLuo.WinFormsUI.Docking.dll
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\bin\WeifenLuo.WinFormsUI.Docking.pdb
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\ResolveAssemblyReference.cache
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\WeifenLuo.WinFormsUI.Docking.Resources.resources
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\WeifenLuo.WinFormsUI.Docking.Strings.resources
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\WeifenLuo.WinFormsUI.Docking.csproj.GenerateResource.Cache
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\WeifenLuo.WinFormsUI.Docking.dll
+D:\Projekte\Bachelorarbeit\src\Third Party\WeifenLuo.WinFormsUI.Docking\obj\Release\WeifenLuo.WinFormsUI.Docking.pdb

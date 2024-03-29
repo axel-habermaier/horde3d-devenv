@@ -1,0 +1,126 @@
+\section{Implementierung des DLL-Replacement-Mechanismus}\label{CodeGen}
+Die Klassenstruktur in Abbildung~\ref{fig:proxyDesign} zusammen mit der Klasse \texttt{Horde3DCall} bilden die Grundlage des DLL-\emph{Replacement}-Mechanismus. Die \emph{Proxy}-Klassen und der \emph{Handler} wurden in \C++/CLI geschrieben, \texttt{Horde3DCall} hingegen in \Csharp. Daher muss die DLL, die die originale \Horde\ DLL der Anwendung ersetzt, sowohl nativen Code als auch \emph{managed} Code enthalten. Die \emph{Proxy}-Funktionen im \texttt{Horde3D}-Namensraum sind nativer Code innerhalb der DLL und können daher von der unmodifizierten Anwendung ohne Neukompilierung -- also völlig transparent -- aufgerufen werden. Diese nativen Funktionen wiederum rufen den \emph{Handler} auf, der \emph{managed} ist und somit vollen Zugriff auf alle öffentlichen \Csharp-Klassen hat.
+
+Problematisch ist die Menge des Codes, der für die Umsetzung des Designs erforderlich ist. \Horde\ 1.0.0 Beta 3 hat 78 öffentliche Funktionen, für die jeweils folgender Code notwendig ist: Ein \emph{Delegate}-Typ, ein Ereignis und eine Funktion in \texttt{Horde3DCall}; ein Funktionszeiger und dessen Initialisierung sowie in eine virtuelle Funktion in \texttt{Horde3DProxyBase}; eine Implementierung der virtuellen Funktion in \texttt{HordeProfilingProxy} und \texttt{Horde3DNoProfilingProxy}; und eine native \emph{Proxy}-Funktion. In der derzeitigen Implementierung des \DevEnvs\ sind das rund 4800 Zeilen Code, die zunächst geschrieben und dann für jede API-Änderung von \Horde\ von Hand angepasst werden müssten. Um diese un\-in\-te\-res\-sante und fehleranfällige Arbeit zu vermeiden, wurde ein Code Generator entwickelt, der den kompletten Code des DLL-\emph{Replacement}-Mechanismus aus dem \Horde-\emph{Header} erzeugt.
+
+\subsection{Code Generator Phase I: Analyse}
+In der Analyse-Phase für den Code Generator wurde untersucht, wie das Tool arbeiten soll und was für Probleme bei der automatischen Typumwandlung von nativen \C++-Typen in .NET-Typen entstehen können. Die Typ-Konvertierungen wurden in folgende Kategorien eingeteilt:
+
+\begin{itemize}
+	\item Primitive Typen wie \texttt{int} und \texttt{float} können ohne manuelle Konvertierung sowohl in \emph{managed} als auch \emph{unmanaged} Code verwendet werden.
+	\item Aufzählungstypen müssen über ihre \texttt{Integer}-Repräsentation konvertiert werden.
+	\item Die \texttt{NodeHandle}- und \texttt{ResHandle}-Datentypen von \Horde\ sind nur Umbenennungen von \texttt{int}. Da man in .NET aber keine globalen Typ-Aliase einführen kann, muss eine Konvertierung in \texttt{int} vorgenommen werden.
+	\item \Horde\ verwendet \texttt{const char*} als String-Repräsentation. Über den Konstruktor der .NET \texttt{String}-Klasse können die \texttt{const char*}-\emph{Arrays} konvertiert werden.
+	\item Im Gegensatz zu \texttt{const char*} sind alle anderen Zeiger problematisch. Es ist nicht klar, ob ein Zeiger einen \emph{out}-Parameter einer Funktion repräsentiert oder ob er auf eine einzelne Variable oder auf ein ganzes \emph{Array} verweist. Daher kann bei einem Zeiger-Parameter oder -Rückgabewert keine automatische Typumwandlung vorgenommen werden. 
+\end{itemize}
+
+Der Code Generator soll eine \Horde-\emph{Header}-Datei parsen und den nötigen Code aus Abbildung~\ref{fig:proxyDesign} sowie die Klasse \texttt{Horde3DCall} generieren. Er soll eine mit dem GUI-Framework erstellte Oberfläche bieten, die problematische Konvertierungen hervorhebt. Eine Konvertierung ist problematisch, wenn die Umwandlung in einen .NET-Typ nicht automatisch bestimmt werden kann, was im wesentlichen nur Zeiger betrifft. Für Zeiger auf primitive Typen kann allerdings vermutet werden, dass sie \emph{out}-Parameter sind und entsprechend einfach nur dereferenziert werden müssen. Diese Standardkonvertierung für Zeiger auf primitive Typen muss aber als problematisch markiert werden, weil auch ein \emph{Array} des primitiven Typs gemeint sein könnte. Völlig unklar hingegen ist die Konvertierung von \texttt{void}-Zeigern.
+
+Der Benutzer soll die Möglichkeit haben, eigenen Code zum Umwandeln des Typs anzugeben oder eine der oben aufgelisteten Standardkonvertierungen auszuwählen. Er soll außerdem in der Lage sein, das Konvertierungsproblem als gelöst zu markieren. Alle manuellen Änderungen sollen aber bei der Neugenerierung des Code nach Updates der \Horde-API übernommen werden können. Der Code Generator soll nur für die Generierung des Codes zuständig sein; die syntaktische Korrektheit des Codes, den der Benutzer eingegeben hat, muss nicht überprüft werden. Der generierte Code soll für unproblematische Typumwandlungen sowohl syntaktisch als auch semantisch korrekt sein.
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 1mm 200mm 80mm 1mm, clip, scale=0.7]{images/CodeGen_UseCaseModel.pdf}
+\caption{Das \emph{Use Case} Modell des Code Generators}\label{fig:cgUCModel}
+\end{figure}
+
+Die im \emph{Use Case} Modell~\ref{fig:cgUCModel} gezeigten Anwendungsfälle des Code Generators sind weitestgehend selbsterklärend. Mit dem System soll man die vorgenommenen Einstellungen speichern und später wieder laden können. Der Benutzer soll außerdem den Namen der generierten Code-Dateien angeben können und auf Wunsch alle Einstellungen verwerfen und von vorne beginnen können. Interessanter sind die Anwendungsfälle für das Ändern der Einstellungen der Code Generierung und für das Parsen der \emph{Header}-Datei. Ersteres wird durch das Aktivitätsdiagramm~\ref{fig:cgChange} dargestellt. Wenn der Benutzer die Einstellungen ändern möchte, zeigt ihm das System zunächst alle problematischen Funktionen an. In der Liste sind alle Funktionen, für die die Konvertierung mindestens eines Parameters oder des Rückgabewertes problematisch ist. Auf Wunsch kann sich der Benutzer aber auch alle \Horde-Funktionen anzeigen lassen. Der Benutzer kann nun eine der Funktionen auswählen, und das System zeigt die ausgewählten Typumwandlungen für alle Parameter und den Rückgabetyp an. Problematische Konvertierungen werden hervorgehoben. Ein Konvertierungsproblem kann nun als gelöst markiert werden, oder die automatisch gewählte Umwandlung geändert werden. Das System speichert die Änderungen, und der Benutzer kann weitere Einstellungen der gewählten Funktion oder weiterer Funktionen ändern.
+
+Beim Parsen der \emph{Header}-Datei von \Horde\ sollen alle Funktionen und ihre Parameter- und Rückgabetypen ausgelesen werden. Es soll versucht werden, eine automatische Typumwandlung für alle Typen der Funktion zu finden. Gelingt dies nicht, soll die Umwandlung als problematisch markiert werden. Falls eine aktualisierte \emph{Header}-Datei geparst wird und der Benutzer vor dem Update bereits manuelle Einstellungen vorgenommen hat, sollen diese übernommen werden. Es muss dazu für jede zuvor manuell geänderte Funktion überprüft werden, ob die Änderungen auf die neu geparste Funktion übertragen werden können. Sollte dies nicht gelingen, so soll die Funktion als problematisch markiert werden und die alten Einstellungen zusätzlich zu den neu generierten gespeichert werden.
+
+Abbildung~\ref{fig:cgDomain} zeigt das Konzeptmodell des Code Generators. \texttt{CodeGenerationSettings} speichert den Dateinamen der zu generierenden \C++- und \Csharp-Dateien, sowie eine Liste der \Horde-Funktionen. Die Einstellungen können in einer Datei gespeichert und wieder geladen werden. Der programmiersprachliche Aufbau der Funktionen wurden in seine Bestandteile zerlegt: Das \texttt{Function}-Konzept enthält den Funktionsnamen und hat für den Rückgabetyp und alle Parameter der Funktion eine Assoziation zu einem \texttt{Type}-Konzept. Dort wird der \C++-Typ gespeichert und festgehalten, ob die Konvertierung problematisch ist, das Problem als gelöst markiert wurde oder ob vom Benutzer manuelle Änderungen vorgenommen wurden. Die gewählte Typumwandlung eines \texttt{Type}s wird durch die Assoziation zu einem Konzept der \texttt{TypeConversion}-Hierarchie beschrieben. Diese Hierarchie entspricht im wesentlichen den oben beschriebenen Kategorien der Typumwandlung. \texttt{ToStringConversion} macht aus einem \texttt{const char*} einen \texttt{System.String}, \texttt{ToEnumConversion} konvertiert eine \C++-Aufzählung in eine \Csharp-Aufzählung, bei einer \texttt{DirectConversion} bleibt der Typ unverändert, \texttt{DereferencePointerConversion} dereferenziert einen Zeiger und \texttt{CodeConversion} erlaubt beliebigen Code. Der Grund für diese genaue Aufschlüsselung der Konvertierungsmethoden liegt in dem unterschiedlichen Code begründet, der für die jeweiligen Methoden generiert werden muss. Die \texttt{TypeConversion}-Hierarchie erlaubt für die Fallunterscheidungen virtuelle Funktionen zu verwenden, anstatt explizit mit \texttt{if-then-else}-Konstruktionen arbeiten zu müssen. Aufgrund dieser sehr implementierungsnahen Argumentation hätte die Hierarchie auch erst in der Design- oder sogar erst in der Implementierungs-Phase eingeführt werden können. Da jedoch die unterschiedlichen Konvertierungskonzepte bereits in dieser Phase untersucht wurden und im Mittelpunkt der Anwendung stehen, wurden sie bereits ins Konzeptmodell aufgenommen.
+
+Der \texttt{AutomaticTypeConverter} versucht über die ihm bekannten \texttt{ConversionRule}s für einen gegebenen \texttt{Type} die beste \texttt{TypeConversion} zu finden. Eine Umwandlungsregel kann als problematisch markiert sein, wenn ihre Richtigkeit nicht garantiert werden kann. Welche Regeln der Code Generator kennt und verwendet, wird in Abbildung~\ref{fig:cgRules} aufgelistet.
+
+\subsection{Code Generator Phase II: Design}
+Wie aus Abbildung~\ref{fig:cgDesign} ersichtlich ist, gibt es nur wenige Unterschiede zwischen dem Designmodell und dem Konzeptmodell des Code Generators. Die Verantwortlichkeiten wurden auf die Klassen verteilt und die \texttt{TypeConversion}-Hierarchie noch etwas verfeinert. Es wird nun zwischen der aus dem Konzeptmodell bekannten \texttt{CodeConversion} und den neuen \texttt{InlineConversion}s unterschieden. Außer der \texttt{CodeConversion} erben alle anderen Konvertierungsklassen von der Basis-Klasse \texttt{InlineConversion}, da die jeweiligen Typumwandlungen in nur einer Zeile Code ausgeführt werden können. \texttt{CodeConversion} erlaubt im Unterschied dazu  beliebig langen Code über mehrere Zeilen, wohingegen \texttt{InlineCodeConversion} beliebigen Code in nur einer einzigen Zeile zulässt.
+
+Ebenfalls im Design hinzugekommen ist die Klasse \texttt{Horde3DHeaderFileParser}, welche die Funktionen in der \emph{Header}-Datei parst und in die Objekt-Struktur der Funktionen aufbaut.
+
+Der Code für die Code Generierung wird aus den \texttt{Function}-Objekten ausgelagert. Diese Mischung aus \emph{Decorator} und \emph{Strategy Pattern} wird durch die \texttt{FunctionCodeGenerator}-Hierarchie umgesetzt. Abhängig von der Art des zu generierenden Codes wird jedes \texttt{Function}-Objekt an eine \texttt{C++FunctionGenerator}- oder \texttt{{\Csharp}FunctionGenerator}-Instanz übergeben. Die Klassen enthalten die benötigten Funktionen zur Generierung des Codes und zum Anzeigen einer Code-Vorschau. Erstellt werden die \texttt{FunctionCodeGenerator}-Objekte durch eine \texttt{CodeGenerator}-Instanz, die Funktionen zur Generierung des gesamten Codes anbietet.
+
+Einziges Modell des Code Generators ist die \texttt{CodeGenerationSettings}-Klasse, die im Designklassen-Diagramm mit dem Stereotyp \texttt{model} hervorgehoben wurde.
+
+Die Abbildungen~\ref{fig:cgGetPFunc} und~\ref{fig:cgIsProb} zeigen die Vorgehensweise zur Ermittlung aller Funktionen mit problematischen Typ-Konvertierungen. Es werden alle Funktionen zurückgeliefert, für die die Umwandlung des Rückgabetyps oder mindestens eines Parametertyps problematisch ist. Falls beim Aktualisieren der Funktion manuelle Benutzereingaben nicht automatisch übernommen werden konnten, wird die Funktion ebenfalls zurückgeliefert.
+
+Das Parsen der \emph{Header}-Datei wird durch das Sequenzdiagramm~\ref{fig:cgParse} dargestellt. Zunächst wird eine Instanz der \texttt{Horde3DHeaderFileParser}-Klasse erzeugt und der Pfad zur \emph{Header}-Datei übergeben. In der übergebenen Datei werden alle Funktionen extrahiert und deren Rückgabetyp und Parameter ermittelt. Für alle Typen der Funktion wird die passende Typ\-umwandlung gesucht. Die \texttt{GuessTypeConversion}-Methode der \texttt{Type}-Klasse verwendet die \emph{Singleton}-Instanz des \texttt{AutomaticTypeConverter}s, um basierend auf dem \C++-Typen und den Konvertierungsregeln ein geeignetes \texttt{TypeConversion}-Objekt zu erzeugen. Nachdem für alle Funktionen alle benötigten Objekte erstellt wurden, wird versucht, alle manuellen Änderungen des Benutzers in die neuen Funktionsobjekte zu kopieren. Sollte es dabei zu Problemen kommen, wird das alte Funktionsobjekt mit all seinen Einstellungen über die \texttt{OldFunction}-Assoziation mit dem neuen Funktionsobjekt verbunden. Die Funktion wird dann als problematisch gelistet, und der Benutzer kann seine Änderungen überprüfen und nachziehen.
+
+\subsection{Code Generator Phase III: Implementierung}\label{cgImpl}
+Während der Implementierung des Code Generators erwies sich die hierarchische Einteilung der \texttt{TypeConversion} als vorteilhaft. Der Code zum Generieren des \Csharp-Codes konnte mit Ausnahme der \texttt{ToEnumConversion} komplett durch die abstrakte \texttt{TypeConversion}-Klasse selbst abgedeckt werden. Bei der Umsetzung der Generierung des \C++-Codes hingegen gab es größere Unterschiede. Durch die Verwendung virtueller Funktionen konnte der Code jedoch auf die einzelnen \texttt{TypeConversion}-Klassen aufgeteilt werden, wodurch die \texttt{FunctionCodeGenerator}-Klassen keine Fallunterscheidungen auf Grundlage der verwendeten Typ-Konvertierungen durchführen müssen.
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 20mm 75mm 55mm 20mm, clip, scale= 0.7]{images/CodeGen_Rules.pdf}
+\caption{Konvertierungsregeln des Code Generators}\label{fig:cgRules}
+\end{figure}	
+
+Für das Parsen der Funktionen in der \Horde-\emph{Header}-Datei wurden \emph{Regular Expressions} verwendet, wodurch der Parsing-Code kompakt gehalten werden konnte. Auch für die Generierung des \Csharp-Codes wurde auf bereits vorhandene .NET-Funktionalitäten zurückgegriffen; .NET enthält einen Code Generator für \Csharp, Visual Basic .NET und \C++/CLI. Der \C++-Code musste jedoch von Hand durch Konstruktion eines Strings generiert werden, da der .NET Code Generator keinen nativen \C++-Code erzeugen kann.
+
+Die Bestimmung der benötigten \texttt{CodeConversionRule}s orientierte sich an den verwendeten Datentypen der \Horde-Funktionen und ist somit nicht allgemein vollständig, sondern nur ausreichend für Version 1.0.0 Beta 3 von \Horde. Die Konvertierungsregeln sind in Abbildung~\ref{fig:cgRules} tabellarisch aufgelistet.
+
+%\begin{sidewaystable}[htp]
+%	\centering
+%		\begin{tabular}{|l|l|l|l|p{3.5cm}|}
+%		  \hline
+%		  \multicolumn{5}{|c|}{\textbf{Konvertierungsregeln des Code Generators}} \\
+%			\hline
+%			\C++-Typ & \texttt{TypeConversion}-Klasse & \Csharp-Typ & Problematisch & Bemerkung\\
+%			\hline
+%			\texttt{bool} & \texttt{DirectConversion} & \texttt{System.Boolean} & nein & \\
+%			\texttt{int} & \texttt{DirectConversion} & \texttt{System.Int32} & nein & \\
+%			\texttt{float} & \texttt{DirectConversion} & \texttt{System.Single} & nein & \\
+%			\texttt{double} & \texttt{DirectConversion} & \texttt{System.Double} & nein & \\
+%			\texttt{void} & \texttt{DirectConversion} & \texttt{System.Void} & nein & Rückgabe-Typ, wird ignoriert\\
+%			\texttt{const char*} & \texttt{ToStringConversion} & \texttt{System.String} & nein & \\
+%			\texttt{EngineOptions} & \texttt{ToEnumConversion} & \texttt{Horde3D.EngineOptions} & nein & \\
+%			\texttt{EngineStats} & \texttt{ToEnumConversion} & \texttt{Horde3D.EngineStats} & nein & \\
+%			\texttt{ResourceTypes} & \texttt{ToEnumConversion} & \texttt{Horde3D.ResourceTypes} & nein & \\
+%			\texttt{SceneNodeTypes} & \texttt{ToEnumConversion} & \texttt{Horde3D.SceneNodeTypes} & nein & \\
+%			\texttt{NodeHandle} & \texttt{InlineCodeConversion} & \texttt{System.Int32} & nein & Alias für \texttt{int} \\
+%			\texttt{ResHandle} & \texttt{InlineCodeConversion} & \texttt{System.Int32} & nein & Alias für \texttt{int}\\
+%			\texttt{NodeHandle*} & \texttt{InlineCodeConversion} & \texttt{System.Int32} & ja & Alias für \texttt{int}, out-Parameter? \\
+%			\texttt{const float**} & \texttt{CodeConversion} & \texttt{System.IntPtr} & ja & \\
+%			\texttt{const float*} & \texttt{DereferencePointerConversion} & \texttt{System.Single} & ja & out-Parameter? \\
+%			\texttt{const void**} & \texttt{CodeConversion} & \texttt{System.IntPtr} & ja & \\
+%			\texttt{const void*} & \texttt{CodeConversion} & \texttt{System.IntPtr} & ja & \\
+%			\texttt{int*} & \texttt{DereferencePointerConversion} & \texttt{System.Int32} & ja & out-Parameter? \\
+%			\texttt{float*} & \texttt{DereferencePointerConversion} & \texttt{System.Single} & ja & out-Parameter? \\
+%			\hline
+%			\end{tabular}
+%\end{sidewaystable}		
+
+\subsection{Code Generierung nach einem Update der Horde3D-API}
+Wenn sich die öffentliche API einer neuen \Horde-Version geändert hat, muss die Code Generierung erneut ausgeführt werden. Um Änderungen, die an den Einstellungen problematischer Funktionen durchgeführt wurden, nicht immer wieder machen zu müssen, verfügt der Code Generator über einen automatischen Update-Mechanismus. Tabelle~\ref{fig:cgStats} zeigt, wie dieser Mechanismus mit API-Updates zurechtkommt.
+
+%\begin{table}[ht]
+%	\centering
+%		\begin{tabular}{|p{5.5cm}|l|l|l|l|}
+%		  \hline
+%		  & \multicolumn{4}{|c|}{\Horde\ Version} \\
+%			\hline
+%			& 0.0.15 & 1.0.0 Beta 1 & 1.0.0 Beta 2 & 1.0.0 Beta 3 \\
+%			\hline
+%			\Horde-Funktionen & 67 & 68 & 75 & 78 \\
+%			Problematische Funktionen & 9 & 9 & 10 & 10 \\
+%			~~~~... bereits als gelöst markiert & - & 9 & 9 & 9 \\
+%			~~~~... eigentlich unproblematisch & 3 & 0 & 1 & 0 \\
+%			Notwendige Änderungen & 6 & 0 & 0 & 1 \\
+%			Änderungen übernommen & - & 6 & 9 & 9 \\
+%			Änderungen verworfen & - & 0 & 0 & 1 \\
+%			\hline
+%			\end{tabular}
+%			\caption{Übersicht über die Übernahme von Änderungen an problematischen Funktionen nach einem Update der \Horde-API}\label{tab:updateStats}
+%\end{table}		
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[trim = 20mm 220mm 20mm 20mm, clip, scale = 0.7]{images/CodeGen_Stats.pdf}
+\caption{Evaluation des Update-Mechanismus des Code Generators}\label{fig:cgStats}
+\end{figure}	
+
+Ausgehend von Version 0.0.15 wurden die API-Updates auf die Betas 1, 2 und 3 von \Horde\ 1.0.0 untersucht. Version 0.0.15 hatte 67 öffentliche Funktionen, von denen neun als problematisch markiert wurden. Von diesen neun waren wiederum drei eigentlich unproblematisch. Die Annahme, bei Zeiger-Parametern handle es sich eigentlich um \emph{out}-Parameter, war für diese drei Funktionen korrekt. Die verbleibenden sechs problematischen Funktionen mussten allerdings wirklich von Hand modifiziert werden. In zwei Fällen konnten \texttt{void}-Zeiger sogar nur als \texttt{System.IntPtr} weitergereicht werden. Ansonsten war es möglich, \texttt{float}-Zeiger, die Matrizen repräsentierten, als \texttt{float}-\emph{Arrays} der Länge 16 weiterzugeben.
+
+Beim Update auf Version 1.0.0 Beta 1 kam eine neue, unproblematische Funktion hinzu. Die manuellen Änderungen konnten alle erfolgreich übernommen werden, sodass nichts weiter zu tun war und der Code sofort neu generiert werden konnte. Mit Beta 2 kamen weitere Funktionen hinzu, von denen eine als problematisch erkannt wurde. Allerdings war auch hier die \emph{out}-Parameter-Annahme korrekt. Alle manuellen Änderungen von Version 0.0.15 wurden auch bei diesem Update korrekt übernommen. Beta 3 führte weitere neue Funktionen ein. Beim Update wurde allerdings eine manuelle Änderung verworfen, da die Funktion umbenannt wurde. Umbenannte Funktionen erkennt der Update-Mechanismus nicht. Die Änderung musste also manuell aus den vorherigen Einstellungen kopiert werden; ansonsten waren aber auch in diesem Update-Schritt keine weiteren Anpassungen nötig.

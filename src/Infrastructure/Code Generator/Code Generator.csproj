@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BDA87CDC-AA01-42A2-A771-E4E28CF1AEC4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Infrastructure.CodeGenerator</RootNamespace>
+    <AssemblyName>Code Generator</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=3.0.6.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dependencies\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Horde3D.NET, Version=1.0.3252.25032, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dependencies\Horde3D.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor, Version=3.0.0.3437, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dependencies\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\AskToSaveCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\GenerateCodeCommand.cs" />
+    <Compile Include="Commands\LoadSettingsCommand.cs" />
+    <Compile Include="Commands\NewSettingsCommand.cs" />
+    <Compile Include="Commands\ParseCommand.cs" />
+    <Compile Include="Commands\ResetCommand.cs" />
+    <Compile Include="Commands\SaveSettingsAsCommand.cs" />
+    <Compile Include="Commands\SaveSettingsCommand.cs" />
+    <Compile Include="Logic\AutomaticTypeConverter.cs" />
+    <Compile Include="Logic\CodeGenerationSettings.cs" />
+    <Compile Include="CodeGeneratorShell.cs">
+    </Compile>
+    <Compile Include="Logic\CodeGenerator.cs" />
+    <Compile Include="Logic\ConversionRule.cs" />
+    <Compile Include="Logic\CppFunctionCodeGenerator.cs" />
+    <Compile Include="Logic\CSharpFunctionCodeGenerator.cs" />
+    <Compile Include="Logic\Function.cs" />
+    <Compile Include="Logic\FunctionCodeGenerator.cs" />
+    <Compile Include="Logic\Horde3DHeaderFileParser.cs" />
+    <Compile Include="Logic\Parameter.cs" />
+    <Compile Include="Logic\Type.cs" />
+    <Compile Include="Logic\TypeConversions\CodeConversion.cs" />
+    <Compile Include="Logic\TypeConversions\DereferencePointerConversion.cs" />
+    <Compile Include="Logic\TypeConversions\DirectConversion.cs" />
+    <Compile Include="Logic\TypeConversions\InlineCodeConversion.cs" />
+    <Compile Include="Logic\TypeConversions\InlineConversion.cs" />
+    <Compile Include="Logic\TypeConversions\ToEnumConversion.cs" />
+    <Compile Include="Logic\TypeConversions\ToStringConversion.cs" />
+    <Compile Include="Logic\TypeConversions\TypeConversion.cs" />
+    <Compile Include="Presenters\CodeGeneratorPresenter.cs" />
+    <Compile Include="Presenters\FunctionDetailsPresenter.cs" />
+    <Compile Include="Presenters\FunctionListPresenter.cs" />
+    <Compile Include="Presenters\ParameterDetailsPresenter.cs" />
+    <Compile Include="Presenters\SettingsDetailsPresenter.cs" />
+    <Compile Include="Presenters\ShellPresenter.cs" />
+    <Compile Include="Presenters\TypeDetailsPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AboutView.resx">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\FunctionDetailsView.resx">
+      <DependentUpon>FunctionDetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\FunctionListView.resx">
+      <DependentUpon>FunctionListView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ParameterDetailsView.resx">
+      <DependentUpon>ParameterDetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SettingsDetailsView.resx">
+      <DependentUpon>SettingsDetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ShellView.resx">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\TypeDetailsView.resx">
+      <DependentUpon>TypeDetailsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Views\AboutView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\AboutView.Designer.cs">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FunctionDetailsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FunctionDetailsView.Designer.cs">
+      <DependentUpon>FunctionDetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FunctionListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FunctionListView.Designer.cs">
+      <DependentUpon>FunctionListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ParameterDetailsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ParameterDetailsView.Designer.cs">
+      <DependentUpon>ParameterDetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsDetailsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SettingsDetailsView.Designer.cs">
+      <DependentUpon>SettingsDetailsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShellView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ShellView.Designer.cs">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TypeDetailsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\TypeDetailsView.Designer.cs">
+      <DependentUpon>TypeDetailsView.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Third Party\WeifenLuo.WinFormsUI.Docking\WeifenLuo.WinFormsUI.Docking.csproj">
+      <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
+      <Name>WeifenLuo.WinFormsUI.Docking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{31AA3698-CD41-426B-A944-D4008D6D2C51}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinForms User Interface\WinForms User Interface.csproj">
+      <Project>{BAC745A5-C2C8-41DB-8449-08F2211F5E1C}</Project>
+      <Name>WinForms User Interface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExtractFunctions.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\DataSources\Infrastructure.CodeGenerator.Logic.CodeGenerationSettings.datasource" />
+    <None Include="Resources\HeaderFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Open.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Properties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\List.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Method.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ProblematicMethod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.CodeGenerator.Logic.Function.datasource" />
+    <None Include="Resources\ResolvedMethod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Code.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Horde3DProxies.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Compile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)Dependencies/Horde3D.dll" "$(ProjectDir)bin" /y</PostBuildEvent>
+  </PropertyGroup>
+</Project>

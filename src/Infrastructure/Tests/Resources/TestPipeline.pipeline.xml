@@ -1,0 +1,95 @@
+<!-- Forward Shading Pipeline -->
+<Pipeline>
+	<Setup>
+		<RenderTarget id="SCENE" depthBuf="true" numColBufs="1" format="RGBA8" scale="1.0" maxSamples="16" />
+		<RenderTarget id="DISTORTION" depthBuf="false" numColBufs="1" format="RGBA8" scale="1.0" maxSamples="0" />
+		<RenderTarget id="DEPTH" depthBuf="true" numColBufs="1" format="RGBA16F" scale="1.0" maxSamples="0" />
+	</Setup>
+	
+	<CommandQueue>
+		<Stage id="Geometry" link="materials/globalSettings.material.xml">
+			<SwitchTarget target="SCENE" />
+			<ClearTarget depthBuf="true" colBuf0="true" />
+			
+			<DrawGeometry context="AMBIENT" class="~Effects" />
+			<DoForwardLightLoop class="~Effects" noShadows="True" />
+			
+			<DrawGeometry context="TRANSLUCENT" class="Translucent.Particle" />
+			<DrawGeometry context="HYENAROTATION" class="Effects.HyenaRotation" />
+			<DrawGeometry context="HYENAROTATION" class="Effects.HyenaTranslation" />
+		</Stage>
+		
+		<Stage id="CacheDepth">
+			<SwitchTarget target="DEPTH" />
+			<ClearTarget colBuf0="true" depthBuf="true" />
+			<DrawGeometry context="DEPTHPASS" class="~Effects" />
+		</Stage>
+		
+		<Stage id="Distortion">
+			<SwitchTarget target="DISTORTION" />
+			<ClearTarget colBuf0="true" />
+			<BindBuffer sampler="currentSceneTex" sourceRT="SCENE" bufIndex="0" />
+			<BindBuffer sampler="depthTex" sourceRT="DEPTH" bufIndex="0" />
+			<DrawGeometry context="FORCEFIELD" class="Effects.ForceField" />
+		</Stage>
+		
+		<Stage id="ForceFields">
+			<SwitchTarget target="SCENE" />
+			<BindBuffer sampler="ffbgTex2" sourceRT="DISTORTION" bufIndex="0" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="FORCEFIELDBACKGROUNDPASS" />
+		</Stage>
+		
+		<Stage id="ShockWaves">
+			<SwitchTarget target="DISTORTION" />
+			<ClearTarget colBuf0="true" />
+			<BindBuffer sampler="colorTex0" sourceRT="SCENE" bufIndex="0" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="COLOR" />
+			<DrawGeometry context="SHOCKWAVE" class="Effects.ShockWave" />
+		</Stage>
+		
+		<Stage id="DrawShockWaves">
+			<SwitchTarget target="SCENE" />
+			<BindBuffer sampler="colorTex0" sourceRT="DISTORTION" bufIndex="0" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="COLOR" />
+		</Stage>
+		
+		<Stage id="FogOfWar">
+			<SwitchTarget target="DISTORTION" />
+			<ClearTarget colBuf0="true" a="0.0" />
+			<BindBuffeBr sampler="currentSceneTex" sourceRT="SCENE" bufIndex="0" />
+			<DrawGeometry context="FOGOFWAR" class="Effects.FogOfWar" />
+		</Stage>
+		
+		<Stage id="DrawFogOfWar">
+			<SwitchTarget target="SCENE" />
+			<BindBuffer sampler="fowBgTex2" sourceRT="DISTORTION" bufIndex="0" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="FOGOFWARBACKGROUNDPASS" />
+		</Stage>
+		
+		<Stage id="greyScaleOut" enabled="false">
+			<SwitchTarget target="" />
+			<BindBuffer sampler="greyscaleTex0" sourceRT="SCENE" bufIndex="0" />
+			<ClearTarget depthBuf="true" colBuf0="true" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="GREYSCALE" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="GREYSCALENOISE" />
+			<DrawOverlays context="OVERLAY" />
+		</Stage>
+		
+		<Stage id="colorOut" enabled="true">
+			<SwitchTarget target="" />
+			<BindBuffer sampler="colorTex0" sourceRT="SCENE" bufIndex="0" />
+			<ClearTarget depthBuf="true" colBuf0="true" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="COLOR" />
+			<DrawOverlays context="OVERLAY" />
+		</Stage>
+		
+		<!--<Stage id="debug" enabled="true">
+			<SwitchTarget target="" />
+			<BindBuffer texUnit="0" target="DEPTH" bufIndex="0" />
+			<ClearTarget depthBuf="true" colBuf0="true" />
+			<DrawQuad material="materials/forcefieldpass.material.xml" context="COLOR" />
+			
+		</Stage>-->
+		
+	</CommandQueue>
+</Pipeline>

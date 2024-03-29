@@ -1,0 +1,694 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4E26AF43-DB55-4DE7-99A1-6BACCA1E8E02}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Client</RootNamespace>
+    <AssemblyName>Horde3D DevEnv</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ManifestCertificateThumbprint>4C85A35E79EE798D40E1521462A181F4039BE5B0</ManifestCertificateThumbprint>
+    <ManifestKeyFile>Client_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>false</GenerateManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <SignManifests>false</SignManifests>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ProductName>Horde3D Development Environment</ProductName>
+    <PublisherName>Axel Habermaier</PublisherName>
+    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BinaryComponents.SuperList, Version=1.0.259.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\BinaryComponents.SuperList.dll</HintPath>
+    </Reference>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=3.5.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Component Factory\Krypton Suite 3.5.0\Bin\ComponentFactory.Krypton.Toolkit.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ExceptionReporter.WinForms, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\ExceptionReporter.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Horde3D.NET, Version=1.0.3362.28165, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Horde3D.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.TextEditor, Version=3.0.0.3437, Culture=neutral, PublicKeyToken=4d61825e8dd49f1a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\ICSharpCode.TextEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="ScalablePictureBox, Version=1.0.3384.19699, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\ScalablePictureBox.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Windows.Forms.DataVisualization, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\System.Windows.Forms.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="TargaImage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\TargaImage.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\ChangeTextEditorTextCommand.cs" />
+    <Compile Include="Commands\GenericUpdatePropertyCommand.cs" />
+    <Compile Include="Commands\NewApplicationCommand.cs" />
+    <Compile Include="Commands\CloseApplicationCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\LoadApplicationCommand.cs" />
+    <Compile Include="Commands\ProfileFrameCommand.cs" />
+    <Compile Include="Commands\SaveCommand.cs" />
+    <Compile Include="Commands\ShowResourceDetailsCommand.cs" />
+    <Compile Include="Commands\ShowSceneNodeDetailsCommand.cs" />
+    <Compile Include="Commands\StartApplicationCommand.cs" />
+    <Compile Include="Commands\StopApplicationCommand.cs" />
+    <Compile Include="Commands\SuspendApplicationCommand.cs" />
+    <Compile Include="Models\ApplicationState.cs" />
+    <Compile Include="Models\CallbackHandler.cs" />
+    <Compile Include="Models\DebuggerServiceProxy.cs" />
+    <Compile Include="Models\Horde3DApplication.cs" />
+    <Compile Include="Models\MessagesDispatcher.cs" />
+    <Compile Include="Models\ProfilingDataManager.cs" />
+    <Compile Include="Presenters\ApplicationSettingsPresenter.cs" />
+    <Compile Include="Presenters\DebuggerPresenter.cs" />
+    <Compile Include="Presenters\ConsoleOutputPresenter.cs" />
+    <Compile Include="Presenters\ErrorListPresenter.cs" />
+    <Compile Include="Presenters\Resources\MaterialPresenter.cs" />
+    <Compile Include="Presenters\Resources\CodePresenter.cs" />
+    <Compile Include="Presenters\Resources\ParticleEffectPresenter.cs" />
+    <Compile Include="Presenters\Resources\PipelinePresenter.cs" />
+    <Compile Include="Presenters\ProfilingPresenter.cs" />
+    <Compile Include="Presenters\Resources\RenderTargetsPresenter.cs" />
+    <Compile Include="Presenters\Resources\ResourcesExplorerPresenter.cs" />
+    <Compile Include="Presenters\Resources\SamplerPresenter.cs" />
+    <Compile Include="Presenters\Resources\ShaderContextPresenter.cs" />
+    <Compile Include="Presenters\Resources\ShaderPresenter.cs" />
+    <Compile Include="Presenters\Resources\ShaderSectionPresenter.cs" />
+    <Compile Include="Presenters\Resources\TexturePresenter.cs" />
+    <Compile Include="Presenters\Resources\UniformPresenter.cs" />
+    <Compile Include="Presenters\SceneNodes\NodePresenter.cs" />
+    <Compile Include="Presenters\SceneNodes\SceneGraphExplorerPresenter.cs" />
+    <Compile Include="Presenters\ShellPresenter.cs" />
+    <Compile Include="Presenters\StartPresenter.cs" />
+    <Compile Include="Presenters\TextEditorPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ApplicationSettingsView.resx">
+      <DependentUpon>ApplicationSettingsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConsoleOutputView.resx">
+      <DependentUpon>ConsoleOutputView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ShellView.resx">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="App.config" />
+    <None Include="Properties\DataSources\Client.Models.ApplicationSettings.datasource" />
+    <None Include="Properties\DataSources\Infrastructure.Core.Client.Horde3DApplication.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="DebuggerShell.cs">
+    </Compile>
+    <Compile Include="Views\AboutView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\AboutView.Designer.cs">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ApplicationSettingsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ApplicationSettingsView.Designer.cs">
+      <DependentUpon>ApplicationSettingsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConsoleOutputView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ConsoleOutputView.Designer.cs">
+      <DependentUpon>ConsoleOutputView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ErrorListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ErrorListView.Designer.cs">
+      <DependentUpon>ErrorListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileSystemDialog.cs" />
+    <Compile Include="Views\Resources\CodeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\CodeView.Designer.cs">
+      <DependentUpon>CodeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\MaterialView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\MaterialView.Designer.cs">
+      <DependentUpon>MaterialView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\PipelineView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\PipelineView.Designer.cs">
+      <DependentUpon>PipelineView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfilingView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ProfilingView.Designer.cs">
+      <DependentUpon>ProfilingView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\ParticleEffectView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\ParticleEffectView.Designer.cs">
+      <DependentUpon>ParticleEffectView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\RenderTargetsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\RenderTargetsView.Designer.cs">
+      <DependentUpon>RenderTargetsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\ResourcesExplorerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\ResourcesExplorerView.Designer.cs">
+      <DependentUpon>ResourcesExplorerView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\SamplerView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\SamplerView.Designer.cs">
+      <DependentUpon>SamplerView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderContextView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderContextView.Designer.cs">
+      <DependentUpon>ShaderContextView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderSectionView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderSectionView.Designer.cs">
+      <DependentUpon>ShaderSectionView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\ShaderView.Designer.cs">
+      <DependentUpon>ShaderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\TextureView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\TextureView.Designer.cs">
+      <DependentUpon>TextureView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Resources\UniformView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\Resources\UniformView.Designer.cs">
+      <DependentUpon>UniformView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SceneNodes\NodeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SceneNodes\NodeView.Designer.cs">
+      <DependentUpon>NodeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SceneNodes\SceneGraphExplorerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SceneNodes\SceneGraphExplorerView.Designer.cs">
+      <DependentUpon>SceneGraphExplorerView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShellView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ShellView.Designer.cs">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StartView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\StartView.Designer.cs">
+      <DependentUpon>StartView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TextEditorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\TextEditorView.Designer.cs">
+      <DependentUpon>TextEditorView.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Core\Core.csproj">
+      <Project>{CDA0F912-7866-4220-B825-4BD9BEC514C1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\Extensions\Extensions.csproj">
+      <Project>{31AA3698-CD41-426B-A944-D4008D6D2C51}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\WinForms User Interface\WinForms User Interface.csproj">
+      <Project>{BAC745A5-C2C8-41DB-8449-08F2211F5E1C}</Project>
+      <Name>WinForms User Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Third Party\WeifenLuo.WinFormsUI.Docking\WeifenLuo.WinFormsUI.Docking.csproj">
+      <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
+      <Name>WeifenLuo.WinFormsUI.Docking</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Run.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Advance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Suspend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Properties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Output.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Explorer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WordWrap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ErrorList.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Horde3D.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Horde3D.NET.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Infrastructure.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Infrastructure.Extensions.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ClearAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SeriousWarning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\detoured.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Native Interop.dll" />
+    <EmbeddedResource Include="Views\AboutView.resx">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ErrorListView.resx">
+      <DependentUpon>ErrorListView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\CodeView.resx">
+      <DependentUpon>CodeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\MaterialView.resx">
+      <DependentUpon>MaterialView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\ParticleEffectView.resx">
+      <DependentUpon>ParticleEffectView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\PipelineView.resx">
+      <DependentUpon>PipelineView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ProfilingView.resx">
+      <DependentUpon>ProfilingView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\RenderTargetsView.resx">
+      <DependentUpon>RenderTargetsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\ResourcesExplorerView.resx">
+      <DependentUpon>ResourcesExplorerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\SamplerView.resx">
+      <DependentUpon>SamplerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\ShaderContextView.resx">
+      <DependentUpon>ShaderContextView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\ShaderSectionView.resx">
+      <DependentUpon>ShaderSectionView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\ShaderView.resx">
+      <DependentUpon>ShaderView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\TextureView.resx">
+      <DependentUpon>TextureView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Resources\UniformView.resx">
+      <DependentUpon>UniformView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SceneNodes\NodeView.resx">
+      <DependentUpon>NodeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SceneNodes\SceneGraphExplorerView.resx">
+      <DependentUpon>SceneGraphExplorerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\StartView.resx">
+      <DependentUpon>StartView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\TextEditorView.resx">
+      <DependentUpon>TextEditorView.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Profiling.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Function.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Statistics.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DebugInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.PipelineResource.datasource" />
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderResource.datasource" />
+    <None Include="Resources\SaveAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AnimationResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Camera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CodeResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Geometry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GroupNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\JointNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LightNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MaterialResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MeshNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Model.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ParticleEffect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PipelineResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SceneGraphResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ShaderResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.TextureResource.datasource" />
+    <None Include="Resources\TextureResource.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SceneGraph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderContext.datasource" />
+    <None Include="Resources\ResourceGraph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderRenderConfig.datasource" />
+    <None Include="Resources\ShaderContext.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ShaderSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MagnifyingGlass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AddShaderSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RemoveShaderSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sampler.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.SamplerStageConfig.datasource" />
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderSampler.datasource" />
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderSection.datasource" />
+    <None Include="Properties\DataSources\Infrastructure.Core.Resources.ShaderUniform.datasource" />
+    <None Include="Resources\Uniform.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\DataSources\Infrastructure.Core.SceneNodes.SceneNode.datasource" />
+    <None Include="Resources\RenderTarget.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Visual.C++.9.0.x86">
+      <Visible>False</Visible>
+      <ProductName>Visual C++ Runtime Libraries %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StartPage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CreateApplication.png" />
+    <None Include="Resources\OpenApplication.png" />
+    <None Include="Resources\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Logo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)bin\Horde3D DevEnv.exe" "$(SolutionDir)bin" /y
+xcopy "$(ProjectDir)bin\Horde3D DevEnv.exe.config" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\ICSharpCode.TextEditor.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\ExceptionReporter.WinForms.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\ComponentFactory.Krypton.Toolkit.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\BinaryComponents.SuperList.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\ScalablePictureBox.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\TargaImage.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\System.Windows.Forms.DataVisualization.dll" "$(SolutionDir)bin" /y</PostBuildEvent>
+    <PreBuildEvent>xcopy "$(SolutionDir)Dependencies\Horde3D.NET.dll" "$(ProjectDir)Resources" /y
+xcopy "$(SolutionDir)bin\Infrastructure.Core.dll" "$(ProjectDir)Resources" /y
+xcopy "$(SolutionDir)bin\Infrastructure.Extensions.dll" "$(ProjectDir)Resources" /y
+xcopy "$(SolutionDir)bin\Horde3D.dll" "$(ProjectDir)Resources" /y
+xcopy "$(SolutionDir)bin\Native Interop.dll" "$(ProjectDir)Resources" /y
+xcopy "$(SolutionDir)bin\detoured.dll" "$(ProjectDir)Resources" /y</PreBuildEvent>
+  </PropertyGroup>
+</Project>

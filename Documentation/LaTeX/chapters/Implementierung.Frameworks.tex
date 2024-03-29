@@ -1,0 +1,68 @@
+\section{Verwendete Technologien und Frameworks}
+Zur Umsetzung des \DevEnvs\ wurde auf kommerzielle und frei verfügbare Open Source Bibliotheken und Frameworks zurückgegriffen, um gewisse Standardlösungen nicht selbst entwickeln zu müssen. Insbesondere basiert das System auf dem .NET Framework von Microsoft\footnote{\url{http://www.microsoft.com/NET}}.
+
+\subsection{.NET Framework}
+2002 veröffentliche Microsoft das .NET Framework, welches seither stark erweitert und verbessert wurde. Ähnlich wie bei Java wird der Code zunächst in eine Zwischensprache, die \emph{Common Intermediate Language}, übersetzt und dann zur Laufzeit von der \emph{Common Language Runtime} (CLR) mit einem \emph{Just-in-Time-Compiler} in Maschineninstruktionen umgewandelt. Das .NET Framework spezifiziert ein vereinheitlichtes Typsystem, das \emph{Common Type System}, bietet die Möglichkeit für \emph{Reflection} und Code Generierung zur Laufzeit und verwendet einen \emph{Garbage Collector} zum Aufräumen und Verwalten des Speichers. Inzwischen gibt es viele Sprachen, die in die \emph{Common Intermediate Language} übersetzt werden können und somit Zugriff auf alle Klassen des .NET Frameworks besitzen. Die wichtigsten sind \Csharp, Visual Basic .NET und \C++/CLI \cite{dotnet}. 
+
+Das Framework und \Csharp\ sind ECMA- und ISO-standardisiert. Es gibt verschiedene Implementierungen des Frameworks, wobei Microsoft offiziell nur Windows, mobile Geräte wie Handys oder Zune und die XBOX 360 unterstützt. Für Linux- und Mac-Systeme ist Mono\footnote{\url{http://www.mono-project.com/Main_Page}} weit verbreitet.
+
+Das \DevEnv\ ist in \Csharp\ 3.0 und \C++/CLI implementiert. Es ist jedoch nur unter Windows lauffähig, da sowohl der Client als auch der Server native, Windows-spezifische Funktionen und Bibliotheken verwenden. Dieser Nachteil wurde jedoch bewusst in Kauf genommen, da die Verwendung des .NET Frameworks und der plattform-abhängigen Bibliotheken eine einfachere und schnellere Implementierung ermöglichte.
+
+Neben der \emph{Base Class Library}, die nur grundlegende Klassen wie Ein-/Ausgabestreams, Dateizugriffe, Strings, Listen, Hash-Tabellen und Warteschlangen anbietet, verwendet das \DevEnv\ vor allem auch Windows Forms (WinForms) für die Umsetzung der GUI, die Windows Communication Foundation (WCF) für die Interprozesskommunikation und Language Integrated Queries (Linq) für Filterung und Sortierung von Listen. Windows Forms basiert auf der mit Windows 95 eingeführten Win32-API und wurde mit dem Update auf .NET 3.0 durch die modernere Windows Presentation Foundation (WPF) abgelöst. Dennoch wird Windows Forms aufgrund seiner Einfachheit und hohen Effizienz -- sowohl bei der Entwicklung als auch beim Laufzeitverhalten -- gerne noch für Anwendungen eingesetzt, die keine speziellen Anforderungen, wie \emph{Themes} oder Animationen, an das grafische Design stellen. Da die GUI des \DevEnvs\ sich am Standard-Design von Windows orientiert, wurde WinForms als UI-Framework gewählt. Obwohl Mono vollständig kompatibel zu Windows Forms ist \cite{winforms}, ist der Client nur unter Windows lauffähig. Zur Umsetzung der GUI wurden zwei Bibliotheken verwendet, Weifen Luo Winforms Docking und das Krypton Toolkit, die native Win32-Funktionen aufrufen und somit von Mono unter Linux und Mac-OS nicht unterstützt werden können.
+
+Die Windows Communication Foundation ist Microsofts Ansatz, eine einheitliche API für die plattformunabhängige, service-orientierte Netzwerkprogrammierung mit dem .NET Framework zu schaffen; insbesondere ersetzt WCF TCP-Sockets und das .NET Remoting. WCF kann sehr flexibel an die Anforderungen des Systems angepasst werden und ist somit sowohl für Webservices als auch für die Interprozesskommunikation geeignet. Da Client und Server des \DevEnvs\ auf dem gleichen Rechner laufen, werden \emph{Named Pipes} zur Kommunikation eingesetzt. Die Verwendung von \emph{Named Pipes} mit WCF garantiert eine performante, verlässliche und geordnete Übertragung der Nachrichten in einem Binärformat. \emph{Callback} Kontrakte werden ebenfalls unterstützt \cite{wcf}.
+
+Linq wird durch eine Reihe neuer Klassen im .NET-Framework realisiert, deren Verwendung durch neue \Csharp\ 3.0-Sprachfeatures vereinfacht wird \cite{linq}. Es erlaubt auf eine deklarative Weise, Listen, XML-Dateien und Datenbanktabellen zu durchsuchen, zu sortieren und zu gruppieren. Diese Operationen sind in herkömmlichen objekt-orientierten oder imperativen Sprachen oft mit viel Code verbunden; durch Linq wird der Code kürzer und präziser, wie man es von Datenbankanfragen mit SQL gewöhnt ist. Zusammen mit Linq verwendet das \DevEnv\ auch weitere neue Sprachfeatures von \Csharp\ 3.0, wie Extension-Methoden und Lambda-Funktionen. Mit Extension-Methoden kann man beliebige Klassen um Funktionen erweitern, ohne den Source Code der Klasse zu ändern oder von ihr zu erben. Lambda-Funktionen bieten eine kurze Syntax zum Definieren anonymer Methoden. Das folgende Beispiel verdeutlicht diese Konzepte:
+
+\lstset{language=Java} 
+\begin{lstlisting}
+// Diese Extension-Methode ruft auf jedem Element der Liste "source"
+// die Funktion "func" auf.
+public static void Foreach<T>(this List<T> source, Action<T> func)
+{
+	if (source == null)
+		return;
+
+	foreach (var item in source)
+		func(item);
+}
+
+// Mit diesem Linq-Query werden alle Ressourcen, deren ResHandle 
+// größer 10 ist, nach ihrem Namen sortiert ausgewählt.
+var resources = from r in ResourceManager.Resources
+								where r.ResHandle > 10
+								order by r.Name
+								select r;
+								
+// Anwendung der Extension-Methode "Foreach". Das Argument für 
+// "source" ist "resources", das Argument für "func" ist eine
+// Lambda-Funktion.
+resources.Foreach(r => r.Reload());
+\end{lstlisting}
+
+\subsection{Verwendete Third Party Bibliotheken}
+
+Die Implementierung des \DevEnvs\ verwendet die folgenden Bibliotheken, die alle kostenlos eingesetzt werden dürfen. Sofern bekannt wurden die Lizenzen der Bibliotheken ebenfalls aufgelistet.
+
+\begin{itemize}
+	\item \textbf{Weifen Luo Winforms Docking} (\textit{MIT License})\footnote{\url{http://sourceforge.net/projects/dockpanelsuite}}: Die Bibliothek wird zur Umsetzung des Visual Studio \emph{User Interfaces} aus Abbildung~\ref{fig:vs} verwendet. Alle für die Umsetzung der GUI benötigten Features sind vorhanden; es wurden lediglich einige kosmetische Verbesserungen durchgeführt. Auch SharpDevelop verwendet diese Bibliothek.
+	
+	\item \textbf{Superlist} (\textit{Microsoft Permissive License v1.1})\footnote{\url{http://www.codeplex.com/Superlist}}: Dieses \emph{User Control} erweitert die \texttt{ListView}- und \texttt{Grid}-Klassen aus Windows Forms um einige neue Features und bietet eine einfachere Schnittstelle als die Standardklassen.
+	
+	\item \textbf{Krypton Toolkit} (\textit{kommerziell/kostenlos)}\footnote{\url{http://www.componentfactory.com}}: Das Toolkit ist Teil der kommerziellen Krypton Suite, darf aber frei verwendet werden. Es enthält Erweiterungen für viele WinForms-Standard-\emph{Controls}, um eine grafisch ansprechendere Oberfläche zu erstellen.
+	
+	\item \textbf{Detours Express} (\textit{kommerziell/kostenlos})\footnote{\url{http://research.microsoft.com/en-us/projects/detours}}: Mit dieser Bibliothek von Microsoft Research können Aufrufe nativer Funktionen auf andere Funktionen umgeleitet werden. Allerdings werden in der Express-Version nur 32 Bit Prozesse unterstützt.
+	
+	\item \textbf{ExceptionReporter} (\textit{GNU Library General Public License})\footnote{\url{http://www.codeplex.com/ExceptionReporter}}: Tritt während der Aus\-führung des Clients eine unerwartete Ausnahme auf, so zeigt der Exception Reporter einen Dialog mit einer ausführlichen Fehlerbeschreibung an. Der Benutzer kann den Entwickler dann per Email über den aufgetretenen Fehler informieren.
+	
+	\item \textbf{SharpDevelop TextEditor} (\textit{GNU Library General Public License})\footnote{\url{http://www.icsharpcode.net/OpenSource/SD}}: Der Text Editor der SharpDevelop IDE unterstützt \emph{Syntaxhighlighting} für \Csharp, \C++/CLI und XML. %Das \DevEnv\ verwendet den Editor, um die XML-Dateien der Ressourcen anzuzeigen. Der Code Generator zeigt eine Vorschau des generierten \Csharp- und \C++-Codes einer \Horde-Funktion mit diesem Editor an.
+	
+	\item \textbf{ScalablePictureBox} (\textit{Open Source/unbekannt})\footnote{\url{http://www.codeproject.com/KB/miscctrl/ScalablePictureBox.aspx}}: %\emph{Render Targets} sind oft größer als das Fenster, in dem sie dargestellt werden. 
+	Das \texttt{ScalablePictureBox}-\emph{Control} erlaubt es, ein dargestelltes Bild mit einem Klick zu verkleinern und wieder zu vergrößern und den dargestellten Teil des Bildes zu verschieben.
+	
+	\item \textbf{Microsoft Chart Controls} (\textit{proprietär/unbekannt})\footnote{\url{http://microsoft.com/downloads/details.aspx?FamilyId=130F7986-BF49-4FE5-9CA8-910AE6EA442C}}: Das .NET Framework enthält keine vorgefertigten APIs zum Darstellen von Diagrammen. Die Chart Controls Bibliothek von Microsoft füllt diese Lücke und ermöglicht eine grafische Auswertung der Profiling-Daten im \DevEnv.
+	
+	\item \textbf{TGAReader} (\textit{The Code Project Open License})\footnote{\url{http://www.codeproject.com/KB/graphics/TargaImage.aspx}}: Die \texttt{Image}-Klasse des .NET Frameworks kann keine Bilder im .tga-Format laden. Die \texttt{TargaImage}-Klasse fügt die .tga-Unterstützung hinzu.
+	
+	\item \textbf{Horde3D} (\textit{GNU Lesser General Public License})\footnote{\url{http://www.horde3d.org}}: Das \DevEnv\ verwendet die C- und \Csharp-Bindings von \Horde. Allerdings ist der Client nicht direkt von der DLL, sondern nur vom Aufbau und der Funktionsweise der Engine abhängig. Der Server hingegen ruft direkt Funktionen von \Horde\ auf.
+\end{itemize}

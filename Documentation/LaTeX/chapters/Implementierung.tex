@@ -1,0 +1,19 @@
+\chapter{Phase III: Implementierung}
+
+Nach der ersten Iteration der Design-Phase war die grundsätzliche Architektur und Funktionsweise des \DevEnvs\ festgelegt. In der Implementierungs-Phase wurde das Design in \C++/CLI und \Csharp\ mit Visual Studio 2008 Service Pack 1 umgesetzt. Es wurde eine Vielzahl an \emph{Third Party} Bibliotheken und Frameworks eingesetzt, um den Programmierungsaufwand möglichst gering zu halten.
+
+Zunächst wurde mit der Umsetzung des DLL-\emph{Replacement}-Mechanismus begonnen, dann wurde das GUI-Framework implementiert. Anschließend wurden die einzelnen Systemanforderungen inkrementell programmiert. Durch das inkrementelle Vorgehen konnten schnell die ersten Features umgesetzt und getestet und dadurch auch früh mögliche Designfehler entdeckt werden. Die Einführung der \emph{Callbacks} wurde beispielsweise während der Umsetzung des Szenengraph-Explorers vorgenommen, bevor die erste Zeile für die Ressourcen oder die Profiling-Daten geschrieben worden war.
+
+Da die wichtigsten Entscheidungen bereits während der Analyse- und Design-Phasen getroffen worden waren, konnte das Design zügig umgesetzt werden. In den folgenden Abschnitten werden nun wichtige technische Details erläutert, die in den vorherigen Phasen noch keine Rolle spielten. Dabei wird allerdings weitestgehend auf das Abdrucken von Code verzichtet und nur die verwendeten Konzepte erläutert. Der komplette Source Code befindet sich auf der beiliegenden CD-ROM.
+
+\input{chapters/Implementierung.Frameworks}
+\input{chapters/Implementierung.CodeGen}
+\input{chapters/Implementierung.WCF}
+\input{chapters/Implementierung.Detours}
+\input{chapters/Implementierung.Aufbau}
+\input{chapters/Implementierung.Konklusion}
+
+
+
+
+

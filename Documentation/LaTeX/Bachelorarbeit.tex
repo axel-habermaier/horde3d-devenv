@@ -1,0 +1,132 @@
+\documentclass[a4paper,onecolumn,11pt,twoside,bibliography=totocnumbered,listof=numbered]{scrreprt}
+% Alternative Optionen:
+%	Papiergröße: a4paper / a5paper / b5paper / letterpaper / legalpaper / executivepaper
+% Duplex: oneside / twoside
+% Grundlegende Fontgrößen: 10pt / 11pt / 12pt
+\usepackage[ngerman]{babel}
+%\usepackage[T1]{fontenc}
+\usepackage[ansinew]{inputenc}
+
+%\usepackage{bera}
+
+\usepackage{graphicx}
+\usepackage{xy}
+%\usepackage{subfigure}
+%\usepackage{subfig} %%Teilabbildungen in einer Abbildung
+%\usepackage{tikz} %%Vektorgrafiken aus LaTeX heraus erstellen
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{rotating}
+
+%% Zeilenabstand %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{setspace}
+%\singlespacing        %% 1-zeilig (Standard)
+%\onehalfspacing       %% 1,5-zeilig
+%\doublespacing        %% 2-zeilig
+
+\usepackage{a4wide}
+\usepackage{fancyhdr}
+\usepackage{longtable}
+
+%\usepackage{chngcntr} 
+%\counterwithout{footnote}{chapter}
+
+
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{nameref}
+\usepackage{verbatim}
+
+\usepackage{relsize}
+
+%c from texinfo.tex
+\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+
+%c C plus plus
+\def\C++{%
+  \ifmonospace%
+    C++%
+  \else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{++}}%
+  \fi%
+  \spacefactor1000 }
+
+%c C sharp
+\def\Csharp{%
+  \ifmonospace%
+    C\#%
+  \else%
+    C\kern-.1667em\raise.30ex\hbox{\smaller{\#}}%
+  \fi%
+  \spacefactor1000 }
+
+
+\usepackage{listings}
+
+\lstset{keywordstyle=\color{Maroon},
+        commentstyle=\color{Blue},
+        stringstyle=\color{Green},
+        showstringspaces=false,
+        tabsize=2,
+			%	numbers=left,
+				basicstyle=\ttfamily\small}
+				
+\usepackage[T1,hyphens]{url}
+\usepackage[pdftex]{hyperref}
+\hypersetup{colorlinks=false,
+				linkcolor=black,
+				citecolor=black,
+				pdfauthor=Axel Habermaier,
+				pdftitle=Bachelorarbeit,
+				pdfborder={0 0 0},
+				pdfpagelayout =SinglePage,
+				pdfsubject=Horde3D Debugger}
+				
+\newcommand{\DevEnv}{Horde3D Development Environment}
+\newcommand{\SheepMeUp}{SheepMeUp}
+\newcommand{\DevEnvs}{Horde3D Development Environments}
+\newcommand{\Horde}{Horde3D}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DOKUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\pagestyle{empty}
+
+\input{deckblatt}
+\pagestyle{empty}
+\input{erklaerung}
+
+\pagestyle{empty}
+
+%% Inhaltsverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\tableofcontents %Inhaltsverzeichnis
+\cleardoublepage %Das erste Kapitel soll auf einer ungeraden Seite beginnen.
+
+\pagestyle{fancyplain} %%Ab hier die Kopf-/Fusszeilen: headings / fancy / ...
+\headheight 13.6pt
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[C]{\rightmark}
+\fancyfoot[C]{\thepage}
+
+
+\input{chapters/Einleitung}
+
+\input{chapters/Analyse}
+
+\input{chapters/Design}
+
+\input{chapters/Implementierung}
+
+\input{chapters/SheepMeUp}
+
+\input{chapters/Ausblick}
+
+\input{chapters/Anhang}
+
+
+\end{document}
+

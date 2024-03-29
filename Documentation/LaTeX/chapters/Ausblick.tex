@@ -1,0 +1,160 @@
+\chapter{Evaluation und Ausblick}
+
+Während der Entwicklung des \DevEnvs\ wurden bereits verschiedene Stärken, eventuelle Schwächen und Erweiterungsmöglichkeiten offensichtlich. Es wurde daher nach Abschluss der Entwicklungsarbeiten überprüft, ob das Tool die Anforderungen erfüllt. Dazu wurde zunächst am Beispiel von \SheepMeUp\ getestet, wie gut das Tool mit bereits bestehenden Anwendungen zusammenarbeitet. Anschließend wurde für einen Prototyp eines Spiels ein Special Effect für den Schild eines Raumschiffes umgesetzt. Es wurden außerdem einige Entwickler aus der Horde-Community gebeten, das Tool zu testen und an einer Meinungsumfrage teilzunehmen, deren Ergebnisse im folgenden ebenfalls vorgestellt werden. Zuletzt wird noch auf einige Ideen für Erweiterungsmöglichkeiten und Verbesserungen eingegangen, die während der Entwicklung des Tools, der Umsetzung des Schild-Effekts oder beim Testen durch die Community-Mitglieder aufgekommen sind. 
+
+\section{Zusammenarbeit mit SheepMeUp}\label{smuport}
+\SheepMeUp\ wurde ursprünglich für die \Horde-Version 1.0.0 Beta 1 entwickelt und musste zunächst auf Beta 3 portiert werden. Die Portierung erwies sich als schwierig, umfangreich und zeitaufwändig, da das komplette Shader-System und große Teile des Material-Systems mit Beta 3 geändert wurden. Es war innerhalb eines ver\-nün\-ftigen Zeitrahmens daher nicht möglich, das Spiel voll funktionsfähig und spielbar auf Beta 3 zu portieren. Die Portierung war jedoch soweit erfolgreich, dass das Spiel wieder lief und nur einige grafische Effekte -- wie Kraftfelder, Fackeln, sowie alle Menü-Elemente -- fehlten. Dies reichte aber bereits aus, um das \DevEnv\ mit \SheepMeUp\ verwenden zu können.
+
+Es traten jedoch einige Kompatibilitätsprobleme mit \SheepMeUp\ auf. Diese lagen zwar im Spiel selbst begründet, zeigten aber auch, dass die idealisierten Annahmen, die bei der Entwicklung des \DevEnvs\ getroffen wurden, in der Realität nicht immer zutreffen. Im folgenden werden die Probleme und ihre Lösung kurz aufgeführt:
+
+\begin{itemize}
+	\item \SheepMeUp\ verwendete keine Originalversion der Horde3D DLL, sondern eine um die Funktion \texttt{castRayAABB} erweiterte Variante. Da das Spiel diese Funktion jedoch nicht aufruft, konnte einfach die Original-DLL verwendet werden. Andernfalls hätte mit dem Code Generator eine angepasste Version des DLL-\emph{Replacement}-Codes generiert werden müssen.
+	
+	\item Anstatt die vergangene Zeit seit dem letzten Frame für zeitabhängige Berechnungen zu verwenden, wurden die aktuellen \textit{Frames Per Second} (FPS) verwendet. Die FPS wurden jedoch über einen Zeitraum von einigen Frames gemittelt, spiegelten also nicht exakt die vergangene Zeit wider. Wird die Anwendung mit dem \DevEnv\ pausiert, so ist die vergangene Zeit seit dem letzten Frame $\Delta t = 0$. In diesem Fall wurden jedoch die FPS nicht aktualisiert. Das führte dazu, dass Schafe, Schockwelleneffekte, die Manaregeneration, zufällig abgespielte Sounds und Partikeleffekte nicht mit $\Delta t = 0$ sondern mit einem falschen FPS-Wert berechnet wurden. Die Physik-Engine wurde jedoch angehalten; so bewegten sich die Schafe beispielsweise weiter, aber flogen durch Hyänen und Wände hindurch. Aufgrund der Ungenauigkeit der FPS-Berechnung sollte immer der wirkliche $\Delta t$-Wert für zeitabhängige Berechnungen verwendet werden. Da alle Klassen des Spiels auf diesen Wert zugreifen können, war eine Anpassung von \SheepMeUp\ innerhalb kürzester Zeit umgesetzt. 
+	
+	\item Die Bewegung der Käfer auf dem Boden des Levels waren überhaupt nicht von der Zeit abhängig; die Käfer wurden also je nach Höhe der FPS schneller oder langsamer. Da die Bewegung zeitunabhängig war, konnte das \DevEnv\ die Käfer auch nicht anhalten. Das war ein Bug des Spiels, der ebenfalls schnell behoben werden konnte. 
+	
+	\item Ein weiterer Fehler steckte in der Sound-Komponente der verwendeten Game Engine der Universität Augsburg. Dort wurde die Geschwindigkeit des \emph{Listeners} unter anderem aus der Differenz zwischen aktueller Zeit und der Zeit des letzten Frames berechnet. Ist die Anwendung angehalten, ist diese Differenz $\Delta t = 0$. Innerhalb der Sound-Bibliothek wurde dann zur Berechnung der Geschwindigkeit des \emph{Listeners} durch $\Delta t = 0$ dividiert, was bei manchen Soundkarten-Treibern zu Abstürzen führte. Dieser Bug der Game Engine konnte durch eine Überprüfung auf den Wert $0$ vor dem Funktionsaufruf schnell behoben werden.
+\end{itemize}
+
+Nach Behebung dieser Bugs arbeitete das \DevEnv\ problemlos mit \SheepMeUp\ zusammen. Da jedoch aufgrund der Portierung des Spiels auf die aktuelle \Horde-Version die Special Effects nicht mehr funktionierten, konnte \SheepMeUp\  nicht als Grundlage für die Implementierung eines neuen Effekts mit Hilfe des \DevEnvs\ dienen.
+
+\section{Umsetzung eines Special Effects für Raumschiff-Schilde}\label{space}
+
+Für einen Prototyp eines Spiels -- ein Raumschiff-Shooter in Top-Down-Ansicht -- wurde ein Effekt für das Auftreffen eines Geschosses auf den Schild eines Raumschiffs umgesetzt. Abbildung~\ref{fig:shields} zeigt eine Momentaufnahme des Effekts. Das Raumschiff in der Mitte wurde von rechts von einem Geschoss getroffen. Die beiden blauen Ringe stellen Energiewellen dar, die durch die Absorption des Schusses durch den Schild laufen.
+
+\begin{figure}[ht]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics{images/shields.png}
+\caption{Momentaufnahme des Schild-Effekts}\label{fig:shields}
+\end{figure}
+
+Es stellte sich heraus, dass das \DevEnv\ in diesem Szenario seine Stärken sehr gut ausspielen kann. Zunächst wurde der Effekt in das Spiel mit einem Standard-Shader, der alles einfach weiß zeichnete, eingebaut. Anschließend wurde das Spiel mit dem \DevEnv\ gestartet und der Effekt implementiert. Während der Umsetzung des Effekts musste das Spiel kein einziges mal neu gestartet oder neu kompiliert werden. 
+
+Der Shader des Effekts besteht im wesentlichen aus der Berechnung von Sinus- und Cosinus-Wellen, die in Abhängigkeit von der Treffposition des Geschosses und der seit dem Treffer vergangenen Zeit berechnet werden. Die Wellen werden zusätzlich in Abhängigkeit von der Zeit und von der Entfernung zum Treffpunkt ausgeblendet. Der größte Vorteil konnte dabei aus der sofortigen Anzeige der Änderungen gezogen werden. Beispielsweise konnte direkt nach der Anpassung einer Konstante der geänderte Shader Code an das Spiel übergeben und die Auswirkungen beurteilt werden. Da dies im Bruchteil einer Sekunde ohne Neustart des Spiels möglich ist, konnten sehr schnell gute Ergebnisse erzielt werden. Da das \DevEnv\ auch sofort etwaige Probleme beim Kompilieren des Shaders anzeigte, konnten Fehler im Code schnell gefunden werden.
+
+Problematisch bei der Entwicklung von Shadern ist das Debugging. Es gibt zwar Tools wie glslDevil\footnote{\url{http://www.vis.uni-stuttgart.de/glsldevil}} der Universität Stuttgart zum Debuggen von GLSL-Shadern, diese sind aber  noch nicht sehr ausgereift. Es bleibt also nur die Möglichkeit zu klassischem "`\texttt{printf}-Debugging"', angepasst auf Shader: Will man den Wert einer Variable wissen, so muss man die Variable als Ausgabe des Shaders -- also die Farbe des Pixels -- setzen und sich die Szene ansehen. Aus den Farbinformationen lassen sich dann Rückschlüsse auf den eigentlichen Wert der Variable ziehen. Diese Art des Debuggings wird vom \DevEnv\ schnell und unkompiliziert unterstützt und erleichtert es erheblich, fehlerhafte Shader zu debuggen.
+
+Während der Entwicklung des Effekts zeigte sich, dass der Shader eine Textur als Eingabe benötigt. Dazu wurde das Material des Effekts angepasst und dort die Textur als Eingabe für den Shader festgelegt. Da beim Aktualisieren des geänderten Materials im Spiel automatisch auch die neue Textur geladen wurde, war auch hier kein Neustart des Spiels notwendig und die Änderungen konnten sofort beobachtet werden.
+
+Der Effekt sollte schließlich noch durch eine Verzerrung des Raumschiff innerhalb des Schildes verbessert werden. Für eine solche Verzerrung benötigt der Shader zusätzlich die komplett gezeichnete Szene als Eingabe. Mit dem \DevEnv\ wurde die Pipeline-Konfiguration des Spiels geändert und ein \emph{Render Target} mit dem Szenen-Inhalt für den Shader bereitgestellt. Dabei war es hilfreich, den Inhalt des \emph{Render Targets} betrachten zu können, um Fehler in der Pipeline-Konfiguration und den Shadern zu beheben. Nach der Erweiterung des Shader Codes konnte der verbesserte Effekt wieder sofort im Spiel betrachtet werden.
+
+Insgesamt erleichtert das \DevEnv\ die Entwicklung neuer Effekte hauptsächlich durch das sofortige Anzeigen der Änderungen sowie durch das sofortige Anzeigen von Problemen beim Kompilieren von Shadern, Einlesen von Materials, etc. Aber auch das Ändern von Texturen von Materials sowie der gesamten Pipeline-Konfiguration ist deutlich einfacher. Der Shader-Designer erwies sich gerade beim Einstellen der Kontext-Parameter wie Blend-Modi, Tiefentests, etc. als sehr hilfreich, weil man die entsprechenden Werte nicht auswendig wissen musste. Ein Großteil der Umsetzung des Shaders wurde im Designer erledigt; die zugrundeliegende XML-Datei wurde nur in wenigen Fällen direkt bearbeitet. Der XML-basierten Konfiguration der Pipeline und des Materials wäre ein ähnlicher Designer ebenfalls überlegen gewesen.
+
+\section{Meinungsumfrage}
+
+\begin{figure}[htp]
+\centering
+%trim=l b r t  	This option will crop the imported image by l from the left, b from the bottom, r from the right, and t  from the top. Where l, b, r and t are lengths. 
+\includegraphics[angle= 90, trim = 1mm 50mm 1mm 10mm, clip, scale=0.7]{images/Fragebogen_Auswertung.pdf}
+\caption{Auswertung der Meinungsumfrage}\label{fig:umfrage}
+\end{figure}
+
+Es wurden einige Mitglieder der \Horde-Community gebeten, das Tool zu testen und einen Fragebogen auszufüllen. Zwei Mitglieder des \SheepMeUp-Entwicklungsteams, ein Entwickler von Alfred und einer der Entwickler von \Horde\  nahmen an der Meinungsumfrage teil. Die Fragen und die Bewertungen der Teilnehmer werden in Abbildung~\ref{fig:umfrage} aufgelistet.
+
+Zunächst wurde gefragt, wie wichtig den Teilnehmern die einzelnen Anforderungen sind, die an das \DevEnv\ gestellt wurden. Dabei fällt auf, dass der Schutz vor unerwünschtem \emph{Reverse-Engineering} insgesamt das unwichtigste Feature ist, aber dennoch für die Teilnehmer von Bedeutung ist. Erwartungsgemäß wurde die Hauptaufgabe des Tools -- das Bearbeiten von Ressourcen und das sofortiges Anzeigen der Änderungen -- zusammen mit der Kompatibilität zu allen \Horde-Anwendungen als am wichtigsten betrachtet.
+
+Die Umsetzung der Ressourcenbearbeitung wurde übereinstimmend als sehr erfolgreich betrachtet, während es bei der Kompatibilität laut Meinung der Teilnehmer noch Nachbes\-ser\-ungsbedarf gibt. Darauf wird in Abschnitt~\ref{Ausblick} noch eingegangen. 
+
+Insgesamt ist der Gesamteindruck des Tools bei allen Teilnehmern sehr positiv ausgefallen. Dies spiegelt sich nicht nur in der Umsetzung der einzelnen Anforderungen wider, sondern auch an den Bewertungen der Oberfläche und des \textit{Look and Feels} der Anwendung. Die beiden wichtigsten Fragen\footnote{Ja/Nein-Fragen sowie Freitext-Antworten sind in Abbildung~\ref{fig:umfrage} nicht aufgelistet.}, ob das Tool die Entwicklung von \Horde-Anwendungen erleichtere und ob sich die Teilnehmer vorstellen könnten, zukünftig das \DevEnv\ zur Entwicklung von \Horde-Anwendungen zu verwenden, wurden einstimmig mit "`ja"' beantwortet.
+
+Im Hinblick auf Kapitel~\ref{abgrenzung} und die teilweise überlappende Funktionalität des \DevEnvs\ und des Horde3D Scene Editors wurden die Teilnehmer gefragt, ob sie ein ähnliches Tool kennen und gegebenenfalls auch bevorzugen würden. Die über\-ein\-stimm\-ende Meinung war, dass der Szenen-Editor zwar teilweise ähnliche Features biete, aber doch einen grundsätzlich anderen Fokus habe, und man daher beide Tools problemlos parallel einsetzten könne.
+
+Abschließend wurden die Teilnehmer nach Verbesserungsvorschlägen und Ideen für Erweiterungen gefragt. Es gab zwei Antworten, die teilweise in Abschnitt~\ref{Ausblick} noch einmal aufgegriffen werden:
+
+\begin{quote}
+"`Ein für mich interessantes Feature wäre noch Overlays während der Laufzeit laden zu können und beliebig über das Horde-Fenster zu positioneren und zu strecken. Die Anordnung soll dann als Snapshot abgespeichert werden können. Dieser "`Designer"' für Overlays fehlt mir noch in allen Horde3D Produkten.
+
+Eine weitere Erweiterungsmöglichkeit sehe ich in einem Plugin-System, welches es erlaubt das Horde3D Development Environment um zusätzliche Editoren und Views zu erweitern.
+
+Darüber hinaus wäre es interessant, Texturen prozedural erzeugen zu können und diese während Laufzeit einzusetzen."'
+\end{quote}
+
+\begin{quote}
+"`Ich bin sehr zufrieden mit dem Programm. Für die Zukunft könnte es interessant sein, DLL-Injection-Methoden zu untersuchen um die Kompatibilität zu verbessern. Ansonsten könnte man den Texture Browser etwas ausbauen (Anzeige von DDS)."'
+\end{quote}
+
+\section{Ausblick}\label{Ausblick}
+
+Wie bereits mehrfach angedeutet wurde, gibt es eine Vielzahl an möglichen Erweiterungen und Verbesserungen für das \DevEnv. In diesem Abschnitt werden einige Punkte vorgestellt und kurz erläutert.
+
+\begin{itemize}
+	\item \textbf{Plugin-System.} Ein Plugin-System wurde auch von einem der Umfrageteilnehmer genannt und wäre eine wichtige Erweiterung für die Shell, um zukünftige neue Features und die Kernfunktionalität sauber trennen zu können. Es gibt bereits einige \Horde-Erweiterungen, wie zum Beispiel für Sound-Ausgabe\footnote{\url{http://www.horde3d.org/wiki/index.php5?title=Sound_Extension}}, die mit einem Plugin-System ebenfalls einfach an das Tool angeschlossen werden könnten.
+	
+	\item \textbf{Verbesserung des DLL-\emph{Replacement}-Mechanismus.} Der DLL-\emph{Re\-place\-ment}-Me\-ch\-anis\-mus sollte in zukünftigen Versionen verbessert werden. Die Kompatibilität mit allen \Horde-Anwendungen ist eines der wichtigsten Ziele des \DevEnvs. Derzeit funktioniert das DLL-\emph{Replacement} nur bei Verwendung der Original-DLL von \Horde. Der Code Generator ließe sich prinzipiell aber leicht so erweitern, dass der Code für die Einstiegspunkte beliebiger \Horde-Extensions ebenfalls generiert wird. Wie ein Teilnehmer an der Meinungsumfrage bereits angedeutet hat, könnten andere \emph{Hooking}-Methoden\footnote{siehe zum Beispiel \url{http://www.codeplex.com/easyhook/Thread/View.aspx?ThreadId=35209}} im Allgemeinen eventuell überlegen sein.
+	
+	\item \textbf{"`Offline"' Ressourcenverarbeitung.} Das \DevEnv\ un\-ter\-stützt derzeit nur die Bearbeitung von Ressourcen, während oder nachdem eine \Horde-Anwendung gelaufen ist. Es wäre von Vorteil, auch ohne laufende Anwendung -- also quasi "`offline"' -- Funktionen wie den Shader Designer verwenden zu können.
+	
+	\item \textbf{Vernetzung der Daten.} Wie man bereits im Konzeptmodell erkennen konnte, sind die einzelnen \Horde-Klassen eng miteinander verbunden. \Horde\ bietet für fast alle dieser Beziehungen die Möglichkeit an, diese nachträglich auszulesen. Das \DevEnv\ könnte diese Informationen nutzen, um beispielsweise alle \emph{Scene Nodes} anzuzeigen, die eine gewissen Ressource verwenden, oder umgekehrt. Auch könnten Fehler- und Debug-Meldungen der Engine mit den zugehörigen Ressourcen oder \emph{Scene Nodes} verknüpft werden. Meldungen über eine fehlgeschlagene Shader-Kompilierung könnten per Doppelklick sofort zur fehlerhaften Zeile führen.
+	
+	\item \textbf{Ausbau und Ergänzung von Designern.} Wie die Entwicklung des Schild-Effekts zeigte, ist der Shader-Designer eine große Unterstützung beim Entwickeln eines Shaders. Die derzeitige Implementierung hat jedoch noch einige Limitierungen, die behoben werden sollten. So können keine neuen Shader \emph{Sections}, Kontexte, \emph{Sampler} oder \emph{Uniforms} angelegt werden; dies muss in der zugrundeliegenden XML-Datei geschehen. Außerdem werden Kommentare in der XML-Datei vom Designer gelöscht. Ähnlich aufgebaute Designer wären ebenfalls für Pipelines, Materials und Partikel denkbar. Interessant wäre hier auch, die Ressourcen enger zu verknüpfen. Wählt man beispielsweise in einem Material eine Textur für einen \emph{Sampler} aus, so könnte man dies an Stelle der händischen Eingabe des Pfades der Textur über eine \emph{Drop-Down}-Auswahl umsetzen. Die Designer könnten auch überprüfen, ob die Pfade alle korrekt sind, ohne dass dafür extra die \Horde-Anwendung gestartet werden muss.
+	
+	\item \textbf{Einfrieren der Szene.} Das Einfrieren der Szene ermöglicht es, zeitabhängige Effekte in einem festen Zustand bearbeiten zu können. Hier wäre es von Vorteil, durch Verlangsamen oder Beschleunigen der Zeit der \Horde-Anwendung schneller oder präziser zu der Stelle des Effekts zu kommen, die gerade relevant ist. Im eingefrorenen Zustand würde außerdem eine \emph{Free-Look} Kamera die Betrachtung des eingefrorenen Effekts von allen Richtungen möglich machen. Wie bereits in Kapitel~\ref{stoptime} ausgeführt, ist das Anhalten der Zeit problematisch. Hier müsste nach weiteren Lösungsmöglichkeiten gesucht werden. Eventuell muss das komplette Anhalten der Threads doch implementiert werden, um Client-Ser\-ver-An\-wen\-dungen einfrieren zu können. Aufgrund der Verwendung des \textit{Strategy Patterns} wäre auch eine Auswahl der verwendeten Algorithmen durch den Benutzer pro \Horde-Anwendung leicht umsetzbar.
+	
+	\item \textbf{Ausbau der Profiling-Funktionalität.} Die Profiling-Funktionalität wurde von den Umfrageteilnehmern als unwichtigstes Feature betrachtet, lässt aber dennoch Raum für einige interessante Erweiterungsmöglichkeiten. So werden bei einem Funktionsaufruf bereits der Rückgabewert und die Werte der Funktionsparameter protokolliert. Die Shell könnte diese Daten anzeigen, damit der Benutzer einen besseren Überblick über die \Horde-Funktionsaufrufe erhält. Außerdem könnten dadurch Funktionsaufrufe mit den Ressourcen oder den \emph{Scene Nodes} verknüpft werden, die als Parameter übergeben wurden. Auch wäre es interessant, \Horde-Fehlermeldungen dem Funktionsaufruf zuzuordnen, der den Fehler erzeugt hat.
+	
+	\item \textbf{Integration oder Anbindung von Third-Party-Anwendungen.} Es gibt \emph{Third-Party}-Anwendungen, deren Integration oder enge Verknüpfung mit dem \DevEnv\ die Produktitivät des Benutzers erhöhen könnten. Denkbar wäre beispielsweise eine Anbindung an glslDevil, um Shader debuggen zu können; eine Integration von SVN, um geänderte Ressourcen gleich in das \emph{Repository} einchecken zu können; oder die Anbindung von Tools wie der Collada Converter von \Horde\ oder FX Composer und RenderMonkey.
+
+\end{itemize}
+
+%# Plugin system
+%
+% #Auf einfache Erweiterbarkeit ausgelegt
+%
+%- Anbindung an Shaderdebugger (glsldevil) möglich? (direkt oder über Replay-Funktion)
+%
+% #Standalone resource editing
+%
+% -Aufzeichnen des aktuellen Zusstands der Anwendung und dann replay
+%
+% #Komplette Contentverwaltung (was wird wo benutzt, was wird nie benötigt), Colladaconverter integrieren
+%
+%#FunctionCalls verweisen auf zugehörige Resource/SceneNode
+%
+%#Geschwindigkeit setzen (Zeitmultiplikator)
+%
+% -Mehr Versionsfähig (d.h. mehrere Horde3D-Dlls im Debugger speichern und Auswa-hlmög-lichkeit pro Pro-jekt)
+%
+%#Kommentare in XML Files gehen durch DShaderesigner verloren
+%
+% #Shader designer ausbauen
+%
+% Undo/Redo vernünftiger machen
+%
+% #Ursprüngliche Idee: Verknüfpung SceneNodes/Resources/Messages
+%
+% #FunctioNCall params anzeigen
+%
+% #Unterstützung von Extensionss
+%
+%#Integration mit RenderMOnkey/fx composer
+%
+%#dll replacement durch was besseres ersetzen?
+%
+%#weitere strategien um thread anzuhalten x32/x64, SuspendApplicationStragey erweitern und verwendete strategien konfigurierbar machen (z.B. wichtig bei lwar)
+%
+%#svn integration
+%
+%#kopieren von resourcenpfadnmane (z.b. textur in material)
+%
+%-problem: maus caputre + verschieben des fensters
+%
+%#kamerareplacment: free look, zeit anhalten/verlangsamen
+%
+%#fehlermeldungen von horde3d nutzen, um fehlerhafte shader zeilen zu markieren
+%
+
+\section{Konklusion}
+
+Die Anforderungen an das \DevEnv\ wurden ausgehend von den Erfahrungen bei der Entwicklung von \SheepMeUp\ formuliert und in einem \textit{Unified Process}-ähnlichen Vorgehen systematisch umgesetzt. Die detaillierte Analyse der Anforderungen und der \Horde-Engine führten zu einem umfangreichen, aber flexiblen Design, das schließlich schnell und weitestgehend problemlos implementiert werden konnte. Dabei wurde eine Vielzahl an Problemen gelöst und generische Frameworks für die GUI-Anbindung und die Code Generierung entwickelt.
+
+Durch die Umsetzung eines Schild-Effekts und einer Umfrage unter mehreren \Horde-Community-Mitgliedern konnte auch bestätigt werden, dass die Anforderungen nicht nur ein Spezialfall der \SheepMeUp-Entwicklung waren, sondern auch für andere Anwender und Anwendungen interessant sind. Die Verwendung des \DevEnvs\ führt zu einem teilweise erheblichen Produktivitätsgewinn bei der Entwicklung von Special Effects für \Horde-Anwendungen. Davon profitieren jedoch nicht nur die Entwickler, die Zeit und Geld sparen, sondern vor allem auch deren Kunden und Benutzer, die in kürzerer Zeit ein qualitativ besseres Produkt erhalten. Es zeigte sich aber auch das Potential, das in zukünftigen Versionen des \DevEnvs\ steckt; die Liste der möglichen Erweiterungen ist umfangreich und viele der Punkte würden die Produktivität um einen weiteren Faktor erhöhen.
+
+Beim Entwurf und der Konzeption des \DevEnvs\ wurde oft an zukünftige Erweiterungen gedacht und bereits einige Vorkehrungen getroffen. Zusätzlich wurden Änderungen berücksichtigt, die an \Horde\ geplant sind oder möglicherweise eines Tages kommen werden. 
+
+In der nächsten Version von \Horde\ wird sich das Shader-System ein weiteres mal -- wenn auch nicht so umfangreich wie beim Umstieg auf Beta 3 -- ändern, um eine HLSL/CG-ähnlichere Syntax zu unterstützen. Aufgrund des modularen Designs des Tools wird diese Umstellung aber nur einige wenige lokale Änderungen an der Shell erfordern. Änderungen der \Horde-API können mit Hilfe des Update-Mechanismus des Code Generators innerhalb von wenigen Sekunden übernommen werden. 
+
+Die nächste \Horde-Version wird zusätzlich einige interessante Erweiterungen zum Abfragen von Ressourcen-Verknüpfungen und -Daten beinhalten, von denen einige geplante Erweiterungen des \DevEnvs\ profitieren könnten. Wenn die immer wieder aufkommende Lizenzdiskussion\footnote{\url{http://www.horde3d.org/forums/viewtopic.php?f=1&t=744&hilit=license}} endgültig geklärt ist, besteht außerdem die Hoffnung auf einen neuen Extension-Mechanismus für \Horde. Erweiterungen müssten dann nicht mehr statisch in die Horde3D DLL gelinkt werden, sondern könnten als DLLs veröffentlicht werden. Das löst zumindest teilweise das DLL-\emph{Replacement}-Problem und vereinfacht die Entwicklung von \DevEnv-Plugins für \Horde-Extensions.
+
+Insgesamt hat das \DevEnv\ das Potential, integraler Bestandteil der Toolsuite eines jeden \Horde-Anwendungsentwicklers zu werden und die Bekanntheit und Beliebtheit von \Horde\ in der Open Source-Welt weiter zu erhöhen.

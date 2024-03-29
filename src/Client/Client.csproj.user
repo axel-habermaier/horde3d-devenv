@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartAction>Project</StartAction>
+    <StartProgram>D:\Projekte\Bachelorarbeit\bin\Horde3D DevEnv.exe</StartProgram>
+    <StartWorkingDirectory>F:\Backup kaputte Platte\Bachelorarbeit\bin</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>D:\Projekte\Bachelorarbeit\bin\Horde3D DevEnv.exe</StartProgram>
+    <StartWorkingDirectory>D:\Projekte\Bachelorarbeit\bin</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>D:\Projekte\Bachelorarbeit\bin\Horde3D DevEnv.exe</StartProgram>
+    <StartWorkingDirectory>D:\Projekte\Bachelorarbeit\bin</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>D:\Projekte\Bachelorarbeit\bin\Shell.exe</StartProgram>
+    <StartWorkingDirectory>D:\Projekte\Bachelorarbeit\bin</StartWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ProjectView>ProjectFiles</ProjectView>
+    <PublishUrlHistory>publish\|%28%24SolutionDir%29\publish\</PublishUrlHistory>
+    <InstallUrlHistory>
+    </InstallUrlHistory>
+    <SupportUrlHistory>
+    </SupportUrlHistory>
+    <UpdateUrlHistory>
+    </UpdateUrlHistory>
+    <BootstrapperUrlHistory>
+    </BootstrapperUrlHistory>
+    <ErrorReportUrlHistory>
+    </ErrorReportUrlHistory>
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
+  </PropertyGroup>
+</Project>

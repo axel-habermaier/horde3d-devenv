@@ -1,0 +1,31 @@
+Weifen Luo Winforms Docking (MIT License), 
+http://sourceforge.net/projects/dockpanelsuite
+
+Superlist (Microsoft Permissive License v1.1), 
+http://www.codeplex.com/Superlist
+
+Krypton Toolkit (commercial/free), 
+http://www.componentfactory.com/
+
+Detours Express (commercial/free), 
+http://research.microsoft.com/en-us/projects/detours/
+
+ExceptionReporter (GNU Library General Public License), 
+http://www.codeplex.com/ExceptionReporter
+
+SharpDevelop TextEditor (GNU Library General Public License),
+http://www.icsharpcode.net/OpenSource/SD/
+
+ScalablePictureBox (Open Source/unknown),
+http://www.codeproject.com/KB/miscctrl/ScalablePictureBox.aspx
+
+Microsoft Chart Controls (commercial/unknown),
+http://microsoft.com/downloads/details.aspx?FamilyId=130F7986-BF49-4FE5-9CA8-910AE6EA442C
+
+TGAReader (The Code Project Open License),
+http://www.codeproject.com/KB/graphics/TargaImage.aspx
+
+Horde3D (GNU Lesser General Public License),
+http://www.horde3d.org/
+
+THANK YOU FOR ALL YOUR GREAT WORK ON THOSE EXCELLENT LIBRARIES AND FRAMEWORKS!

@@ -1,0 +1,35 @@
+\section{Client-Server-Kommunikation}
+Bei der Implementierung der Client-Server-Kommunikation mit der Windows Communication Foundation konnte das \texttt{IDebuggerService}- und das \texttt{IDebuggerServiceCallback}-Interface aus dem Design unverändert übernommen werden. Aus technischen Gründen musste allerdings noch die Service-Operation \texttt{RegisterClient} hinzugefügt werden. Der Client ruft diese Funktion sofort nach dem Zustandekommen der Verbindung auf, um seinen \emph{Callback Channel} beim Server zu registrieren. Dann erst kann der Server \emph{Callbacks} an den Client schicken.
+
+Es mussten besondere Maßnahmen getroffen werden, um \emph{Deadlocks} und \emph{Race Conditions} zu vermeiden. Die \Horde-Anwendung kann mehrere Threads verwenden; der Server hat keine Möglichkeit dies herauszufinden und sollte davon auch nicht abhängen, da die \Horde-API sowieso nicht \emph{thread-safe} ist. Die Implementierung geht deshalb davon aus, dass alle \Horde-Funktionen vom gleichen Thread aus aufgerufen werden. WCF führt aber jede Anfrage des Clients in einem gerade zur Verfügung stehenden Thread des \emph{Thread Pools} aus. Da die Service-Operationen zumindest teilweise auf \Horde-Funktionen zugreifen, könnte es somit zu \emph{Race Conditions} kommen oder auf inkonsistenten Zuständen gearbeitet werden. Es musste daher sichergestellt werden, dass jeder Server-Aufruf im gleichen Thread wie \Horde\ läuft. 
+
+Das .NET Framework bietet die \texttt{SynchronizationContext}-Klasse für Threadwechsel an. Der \texttt{Post}-Methode dieser Klasse kann ein \emph{Delegate} übergeben werden, der in einem ganz bestimmten Thread ausgeführt wird. Leider stellt die Standard-Implementierung der Klasse nur die Funktionen bereit, das Wechseln des Threads ist nicht implementiert\footnote{Der Grund dafür ist, dass es verschiedene Möglichkeiten für die Implementierung des Threadwechsels gibt. .NET bietet zwei Implementierungen für WinForms und WPF an, die allerdings auch nur von WinForms- und WPF-Anwendungen verwendet werden können. \Horde-Anwendung können aber auch die native Win32-API zum Erzeugen des Anwendungsfensters benutzen.}. Es wurde daher der \texttt{Horde3DSynchronizationContext} entwickelt, der von \texttt{SynchronizationContext} erbt. Wird die \texttt{Post}-Methode der Klasse aufgerufen, wird die übergebene Funktion in einer \texttt{Queue} \emph{thread-safe} protokolliert, aber noch nicht ausgeführt. 
+
+Bei jedem Aufruf einer \Horde-Funktion löst \texttt{Horde3DCall} das \texttt{BeforeFunctionCalled}-Ereignis aus. Der \texttt{Horde3DDebugger} registriert einen \emph{Event Handler}, der beim Auslösen dieses Ereignisses die \texttt{Execute}-Methode des \texttt{Horde3DSynchronizationContext}s aufruft. Da die Horde-Funktion und somit auch das Ereignis im \Horde-Thread laufen, werden alle Methoden, die derzeit in der \texttt{Queue} des Synchronisationskontexts liegen, der Reihe nach im \Horde-Thread ausgeführt.
+
+Dieses Prinzip stellt sicher, dass alle Aufrufe der WCF-Serverfunktionen im \Horde-Thread laufen. Da WCF sehr flexibel und konfigurierbar entwickelt wurde, kann WCF automatisch eine Instanz des \texttt{Horde3DSynchronizationContext}s zum Wechseln des Threads verwenden. Dazu musste das \texttt{Horde3DThreadAffinityAttribute}-Attribut definiert werden, welches das \texttt{IContractBehavior}-Interface von WCF implementiert. Mit diesem Attribut kann der Synchronisationskontext von WCF programmatisch gesetzt werden \cite{wcf}.
+
+Das Design sah auch vor, dass \emph{Callback}-Aufrufe garantiert an den Client geschickt werden, auch, wenn dieser noch gar nicht verbunden ist. Die \texttt{DebuggerService}-Klasse wurde daher um statische Funktionen für jede \emph{Callback}-Operation erweitert, die den \emph{Callback}-Aufruf abfangen und in einen anderen Thread verlagern. Dieser Thread versucht solange den \emph{Callback} auszuführen, bis eine Verbindung aufgebaut wurde und der \emph{Callback} erfolgreich durchgeführt werden konnte.
+
+Client-seitig werden Serveroperationen immer aus einem \emph{Backgroundthread} aufgerufen, damit die GUI nicht blockiert wird und weiterhin auf Benutzereingaben reagieren kann. Die \texttt{DebuggerServiceProxy}-Klasse kümmert sich intern um die Verbindung zum Server und die Thread-Verwaltung. Falls der Client noch nicht zum Server verbunden ist, wird vor dem Aufruf der Operation eine Verbindung aufgebaut.
+
+Ein Problem ergab sich durch die Assoziationen zwischen den Ressourcen und insbesondere der \emph{Scene Nodes} untereinander. WCF serialisiert immer den kompletten Objektgraph. Schickt man also beispielsweise einen \emph{Scene Node} an den Client, wird auch dessen Vaterknoten mitgeschickt. Aber auch der Vater des Vaters wird mit übertragen. Das endet erst beim Erreichen der Wurzel. Um dieses Problem zu vermeiden, werden die Assoziationen über die \texttt{NodeHandle}s beziehungsweise \texttt{ResHandle}s identifiziert. Der Client muss dann über diese IDs das eigentliche Objekt beim \texttt{SceneGraph}- oder \texttt{ResourceGraph}-Modell erfragen. Die Zuordnung von den IDs zu den Objekten erfolgt über eine Hashtabelle, hat also nur die Komplexität $O(1)$. Um den Zugriff syntaktisch möglichst einfach zu halten, ist in der \texttt{Graph}-Klasse ein Indexoperator definiert. Das folgende Beispiel zeigt die Implementierung des \emph{Properties} \texttt{SceneNode.Parent}, das über die \texttt{SceneGraph}-Instanz und den \texttt{NodeHandle} des Vaters die Vater-Instanz zurückliefert:
+
+\lstset{language=Java} 
+\begin{lstlisting}
+public class SceneNode
+{
+	internal int ParentHandle { get; }
+	
+	public SceneGraph SceneGraph { get; set; }
+	
+	public SceneNode Parent
+	{
+		get { return SceneGraph[ParentHandle]; }
+	}
+	
+	// ...
+}
+\end{lstlisting}
+
+Der Zugriff auf die Vater-Instanz über das \texttt{ParentHandle}-\emph{Property} wird komplett gekapselt. Für den Benutzer der Klasse macht es keinen Unterschied, ob die Vater-Instanz direkt übertragen wird, oder aus dem \texttt{SceneGraph}-Objekt stammt.

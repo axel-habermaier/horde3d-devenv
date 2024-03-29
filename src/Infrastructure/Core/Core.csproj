@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CDA0F912-7866-4220-B825-4BD9BEC514C1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Infrastructure.Core</RootNamespace>
+    <AssemblyName>Infrastructure.Core</AssemblyName>
+    <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Horde3D.NET, Version=1.0.3362.27958, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dependencies\Horde3D.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Communication\IDebuggerServiceCallback.cs" />
+    <Compile Include="Graph.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Profiling\FrameProfiler.cs" />
+    <Compile Include="Profiling\FunctionCall.cs" />
+    <Compile Include="Communication\IDebuggerService.cs" />
+    <Compile Include="Messages\Horde3DMessagesHandler.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\AddressMode.cs" />
+    <Compile Include="Resources\AnimationResource.cs" />
+    <Compile Include="Resources\BlendMode.cs" />
+    <Compile Include="Resources\CodeResource.cs" />
+    <Compile Include="Resources\EditableResource.cs" />
+    <Compile Include="Resources\FilteringMode.cs" />
+    <Compile Include="Resources\FxSection.cs" />
+    <Compile Include="Resources\GeometryResource.cs" />
+    <Compile Include="Resources\MaterialResource.cs" />
+    <Compile Include="Resources\ParticleEffectResource.cs" />
+    <Compile Include="Resources\PipelineResource.cs" />
+    <Compile Include="Resources\PixelFormat.cs" />
+    <Compile Include="Resources\RenderTarget.cs" />
+    <Compile Include="Resources\Resource.cs" />
+    <Compile Include="Resources\ResourceFactory.cs" />
+    <Compile Include="Resources\ResourceGraph.cs" />
+    <Compile Include="Resources\SceneGraphResource.cs" />
+    <Compile Include="Resources\ShaderContext.cs" />
+    <Compile Include="Resources\ShaderRenderConfig.cs" />
+    <Compile Include="Resources\ShaderResource.cs" />
+    <Compile Include="Resources\ShaderSampler.cs" />
+    <Compile Include="Resources\ShaderSection.cs" />
+    <Compile Include="Resources\SamplerStageConfig.cs" />
+    <Compile Include="Resources\ShaderType.cs" />
+    <Compile Include="Resources\ShaderUniform.cs" />
+    <Compile Include="Resources\TestFunction.cs" />
+    <Compile Include="Resources\TextureResource.cs" />
+    <Compile Include="SceneNodes\CameraNode.cs" />
+    <Compile Include="SceneNodes\EmitterNode.cs" />
+    <Compile Include="SceneNodes\GroupNode.cs" />
+    <Compile Include="SceneNodes\JointNode.cs" />
+    <Compile Include="SceneNodes\LightNode.cs" />
+    <Compile Include="SceneNodes\MeshNode.cs" />
+    <Compile Include="SceneNodes\ModelNode.cs" />
+    <Compile Include="SceneNodes\SceneGraph.cs" />
+    <Compile Include="SceneNodes\SceneNode.cs" />
+    <Compile Include="SceneNodes\SceneNodeFactory.cs" />
+    <Compile Include="Server\ApplicationState.cs" />
+    <Compile Include="Server\GeneratedHorde3DCall.cs" />
+    <Compile Include="Server\Horde3DCall.cs" />
+    <Compile Include="Server\Horde3DDebugger.cs" />
+    <Compile Include="Server\Horde3DSynchronizationContext.cs" />
+    <Compile Include="Server\IProxyHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Communication\DebuggerService.cs" />
+    <Compile Include="Server\Horde3DStateWatcher.cs" />
+    <Compile Include="Server\ServerConfiguration.cs" />
+    <Compile Include="Vector3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Server\Native Interop\Native Interop.vcxproj">
+      <Project>{16645FB7-97A1-4DB3-AB71-12CB5D07DF2B}</Project>
+      <Name>Native Interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{31AA3698-CD41-426B-A944-D4008D6D2C51}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{3D9AD99F-2412-4246-B90B-4EAA41C64699}">
+        <WcfProjectProperties>
+          <AutoStart>False</AutoStart>
+        </WcfProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)bin\Infrastructure.Core.dll" "$(SolutionDir)bin" /y
+xcopy "$(SolutionDir)Dependencies\Horde3D.NET.dll" "$(SolutionDir)bin\" /y</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

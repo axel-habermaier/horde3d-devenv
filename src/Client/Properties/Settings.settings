@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Client.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LastApplication" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ProxyDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Horde3D.dll</Value>
+    </Setting>
+    <Setting Name="CoreDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Infrastructure.Core.dll</Value>
+    </Setting>
+    <Setting Name="ExtensionsDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Infrastructure.Extensions.dll</Value>
+    </Setting>
+    <Setting Name="Horde3DNetDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Horde3D.NET.dll</Value>
+    </Setting>
+    <Setting Name="NativeInteropDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Native Interop.dll</Value>
+    </Setting>
+    <Setting Name="DetouredDll" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">detoured.dll</Value>
+    </Setting>
+    <Setting Name="LastDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="RecentApplications" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NumRecentApplications" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

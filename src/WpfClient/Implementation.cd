@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WpfClient.DebuggerClient">
+    <Position X="0.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAJCAAAAAAACIAQAAAAgCABAGAAAABAAAACA=</HashCode>
+      <FileName>DebuggerClient.xaml.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Application" />
+      <Property Name="ApplicationExplorer" />
+      <Property Name="ErrorList" />
+      <Property Name="Shell" />
+      <Property Name="Output" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WpfClient.Commands.Shell.UndoCommand" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Shell\UndoCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.Commands.Messages.AddMessageCommand" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Messages\AddMessageCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.Commands.Messages.ClearCategoryCommand" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Messages\ClearCategoryCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.Commands.Messages.SwitchCategoryCommand" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Messages\SwitchCategoryCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.Infrastructure.Command">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAQAAEQAAABEAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Infrastructure\Command.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WpfClient.Infrastructure.ViewModel">
+    <Position X="11" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Infrastructure\ViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WpfClient.UserInterface.Explorer.ApplicationExplorer" Collapsed="true">
+    <Position X="5.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UserInterface\Horde3DApplication\ApplicationExplorer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.UserInterface.Horde3DApplication.ApplicationSettings" Collapsed="true">
+    <Position X="5.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UserInterface\Horde3DApplication\ApplicationSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.UserInterface.Messages.ErrorList" Collapsed="true">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UserInterface\Messages\ErrorList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.UserInterface.Messages.Output" Collapsed="true">
+    <Position X="5.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>UserInterface\Messages\Output.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.UserInterface.Shell" Collapsed="true">
+    <Position X="5.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAFAACAAAAAAADAAAAABIAAIAgABAAAAAAEAAA=</HashCode>
+      <FileName>UserInterface\Shell.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfClient.Infrastructure.Horde3DApplication" Collapsed="true">
+    <Position X="1" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAIACAYQAAEIgAAAQAAIAAAIQggAIAKhAAUAAQE=</HashCode>
+      <FileName>Infrastructure\Horde3DApplication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
