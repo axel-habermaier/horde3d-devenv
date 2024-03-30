@@ -6,9 +6,10 @@
     <StartWorkingDirectory>F:\Backup kaputte Platte\Bachelorarbeit\bin</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <StartAction>Program</StartAction>
+    <StartAction>Project</StartAction>
     <StartProgram>D:\Projekte\Bachelorarbeit\bin\Horde3D DevEnv.exe</StartProgram>
-    <StartWorkingDirectory>D:\Projekte\Bachelorarbeit\bin</StartWorkingDirectory>
+    <StartWorkingDirectory>
+    </StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <StartAction>Program</StartAction>

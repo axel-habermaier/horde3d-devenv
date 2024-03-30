@@ -1,9 +1,0 @@
-D:\Projekte\Bachelorarbeit\bin\license.txt
-D:\Projekte\Bachelorarbeit\bin\WeifenLuo.WinFormsUI.Docking.dll
-D:\Projekte\Bachelorarbeit\bin\WeifenLuo.WinFormsUI.Docking.pdb
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\ResolveAssemblyReference.cache
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\WeifenLuo.WinFormsUI.Docking.Resources.resources
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\WeifenLuo.WinFormsUI.Docking.Strings.resources
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\WinForms Dock Library.csproj.GenerateResource.Cache
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\WeifenLuo.WinFormsUI.Docking.dll
-D:\Projekte\Bachelorarbeit\ThirdParty.WinFormsUI\obj\Release\WeifenLuo.WinFormsUI.Docking.pdb
